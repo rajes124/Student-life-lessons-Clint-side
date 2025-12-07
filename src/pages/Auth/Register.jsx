@@ -7,6 +7,7 @@ import {
 } from "firebase/auth";
 import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
+import { FcGoogle } from "react-icons/fc";
 
 const Register = () => {
   const [name, setName] = useState("");
@@ -59,48 +60,78 @@ const Register = () => {
   };
 
   return (
-    <div className="auth-container">
-      <h2>Register</h2>
+    <div className="relative min-h-screen flex items-center justify-center bg-gray-100 px-4 overflow-hidden">
+      <video
+        autoPlay
+        loop
+        muted
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+      >
+        <source src="/src/assets/background.mp4" type="video/mp4" />
+      </video>
 
-      <form onSubmit={handleRegister}>
-        <input
-          type="text"
-          placeholder="Full Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
+      <div className="absolute top-0 left-0 w-full h-full bg-black/40 backdrop-blur-sm z-10"></div>
 
-        <input
-          type="text"
-          placeholder="Photo URL"
-          value={photoURL}
-          onChange={(e) => setPhotoURL(e.target.value)}
-        />
+      <div className="relative z-20 w-full max-w-md bg-white/80 shadow-2xl rounded-2xl p-8 animate-[slideUp_0.6s_ease]">
+        <h2 className="text-3xl font-bold text-center mb-6 text-blue-600">
+          Register
+        </h2>
 
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
+        <form onSubmit={handleRegister} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Full Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
+          />
 
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+          <input
+            type="text"
+            placeholder="Photo URL"
+            value={photoURL}
+            onChange={(e) => setPhotoURL(e.target.value)}
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
+          />
 
-        <button type="submit">Register</button>
-      </form>
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
+          />
 
-      <button onClick={handleGoogleRegister}>
-        Register / Login with Google
-      </button>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
+          />
 
-      <p>
-        Already have an account? <Link to="/login">Login here</Link>
-      </p>
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+          >
+            Register
+          </button>
+        </form>
+
+        <button
+          onClick={handleGoogleRegister}
+          className="w-full mt-4 flex items-center justify-center gap-2 bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition"
+        >
+          <FcGoogle size={24} /> Register / Login with Google
+        </button>
+
+        <p className="text-center mt-4 text-white">
+          Already have an account? {" "}
+          <Link to="/login" className="text-blue-400 font-semibold">
+            Login here
+          </Link>
+        </p>
+      </div>
     </div>
   );
 };
