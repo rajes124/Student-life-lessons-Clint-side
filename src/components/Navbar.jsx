@@ -23,6 +23,7 @@ const Navbar = () => {
   return (
     <nav className="w-full bg-green-400 text-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+
         {/* Logo */}
         <div className="flex items-center gap-2">
           <span className="text-2xl">📘</span>
@@ -36,7 +37,6 @@ const Navbar = () => {
           <Link to="/pricing" className="hover:text-blue-400">Pricing</Link>
           <Link to="/about" className="hover:text-blue-400">About</Link>
 
-          {/* Logged In Links */}
           {user && (
             <>
               <Link to="/add-lesson" className="hover:text-blue-400">Add Lesson</Link>
@@ -51,21 +51,32 @@ const Navbar = () => {
           {!user ? (
             <>
               <Link to="/login" className="hover:text-blue-300">Login</Link>
-              <Link to="/signup" className="bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700">
-                Signup
+              <Link to="/register" className="bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700">
+                Register
               </Link>
             </>
           ) : (
             <div className="relative">
-              <img
-                src={user.photoURL || "https://i.pravatar.cc/40"}
-                alt="avatar"
-                className="w-10 h-10 rounded-full cursor-pointer"
+              <div
+                className="flex items-center gap-2 cursor-pointer"
                 onClick={() => setOpenDropdown(!openDropdown)}
-              />
+              >
+                <img
+                  src={user.photoURL || "https://i.pravatar.cc/40"}
+                  alt="avatar"
+                  className="w-10 h-10 rounded-full"
+                />
+                <span className="font-semibold">{user.displayName || "User"}</span>
+              </div>
 
               {openDropdown && (
-                <div className="absolute right-0 mt-3 bg-white text-black rounded-lg shadow-lg w-40 py-2 z-50">
+                <div className="absolute right-0 mt-3 bg-white text-black rounded-lg shadow-lg w-48 py-2 z-50">
+                  
+                  <div className="px-4 pb-2 border-b">
+                    <p className="font-semibold">{user.displayName}</p>
+                    <p className="text-sm text-gray-600">{user.email}</p>
+                  </div>
+
                   <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">Profile</Link>
                   <Link to="/dashboard" className="block px-4 py-2 hover:bg-gray-100">Dashboard</Link>
                   <Link to="/my-lessons" className="block px-4 py-2 hover:bg-gray-100">My Lessons</Link>
@@ -82,7 +93,7 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Button */}
         <button className="md:hidden text-2xl" onClick={() => setOpenMenu(!openMenu)}>
           ☰
         </button>
@@ -91,6 +102,7 @@ const Navbar = () => {
       {/* Mobile Menu */}
       {openMenu && (
         <div className="md:hidden bg-gray-800 px-4 py-4 space-y-3">
+          
           <Link to="/" className="block hover:text-blue-400">Home</Link>
           <Link to="/public-lessons" className="block hover:text-blue-400">Public Lessons</Link>
           <Link to="/pricing" className="block hover:text-blue-400">Pricing</Link>
@@ -101,14 +113,18 @@ const Navbar = () => {
               <Link to="/add-lesson" className="block hover:text-blue-400">Add Lesson</Link>
               <Link to="/my-lessons" className="block hover:text-blue-400">My Lessons</Link>
               <Link to="/dashboard" className="block hover:text-blue-400">Dashboard</Link>
+              <Link to="/profile" className="block hover:text-blue-400">Profile</Link>
             </>
           )}
 
           {!user ? (
             <>
               <Link to="/login" className="block hover:text-blue-300">Login</Link>
-              <Link to="/signup" className="block bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 w-fit mt-2">
-                Signup
+              <Link
+                to="/register"
+                className="block bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 w-fit mt-2"
+              >
+                Register
               </Link>
             </>
           ) : (

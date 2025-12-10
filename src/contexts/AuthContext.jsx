@@ -1,19 +1,29 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({
+    name: "Rishi",
+    email: "rishi@example.com",
+    photoURL: "https://via.placeholder.com/150"
+  }); // default/fake user, replace with real auth logic
 
-  const value = { user, setUser };
+  // Optionally load from localStorage or Firebase here
+  useEffect(() => {
+    const saved = localStorage.getItem("user");
+    if (saved) setUser(JSON.parse(saved));
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("user", JSON.stringify(user));
+  }, [user]);
 
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ user, setUser }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => useContext(AuthContext);
-
-// ❌ default export দরকার নেই — remove it!

@@ -1,19 +1,59 @@
-import { Outlet } from "react-router-dom";
-import UserMenu from "../components/UserMenu";
-import AdminMenu from "../components/AdminMenu";
+import React from "react";
+import { Link, Outlet } from "react-router-dom";
+import { FaBars } from "react-icons/fa";
 
 const DashboardLayout = () => {
+  const [open, setOpen] = React.useState(true);
+
   return (
-    <div style={{ display: "flex" }}>
-      <div style={{ width: "220px", borderRight: "1px solid gray" }}>
-        <h3>User Menu</h3>
-        <UserMenu />
-        <hr />
-        <h3>Admin Menu</h3>
-        <AdminMenu />
+    <div className="min-h-screen flex bg-gray-100">
+
+      {/* Sidebar */}
+      <div
+        className={`${
+          open ? "w-64" : "w-16"
+        } bg-white shadow-xl transition-all duration-300 p-4`}
+      >
+        <button
+          className="text-gray-600 mb-6"
+          onClick={() => setOpen(!open)}
+        >
+          <FaBars size={22} />
+        </button>
+
+        <nav className="space-y-3">
+          <Link
+            to="/dashboard"
+            className="block p-2 rounded hover:bg-gray-200 font-medium"
+          >
+            Overview
+          </Link>
+
+          <Link
+            to="/dashboard/profile"
+            className="block p-2 rounded hover:bg-gray-200 font-medium"
+          >
+            Profile
+          </Link>
+
+          <Link
+            to="/dashboard/settings"
+            className="block p-2 rounded hover:bg-gray-200 font-medium"
+          >
+            Settings
+          </Link>
+
+          <Link
+            to="/dashboard/messages"
+            className="block p-2 rounded hover:bg-gray-200 font-medium"
+          >
+            Messages
+          </Link>
+        </nav>
       </div>
 
-      <div style={{ padding: "20px", flex: 1 }}>
+      {/* Main Content Area */}
+      <div className="flex-1 p-6">
         <Outlet />
       </div>
     </div>
