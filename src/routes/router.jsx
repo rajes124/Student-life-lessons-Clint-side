@@ -9,6 +9,7 @@ import Home from "../pages/Home/Home";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import Profile from "../components/UpdateProfile/profile";
+import Publiclessons from "../pages/Public/Publiclessons";
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ export const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
       { path: "profile", element: <Profile /> },
+      { path: "public-lessons", element: <Publiclessons /> },
     ],
   },
 
