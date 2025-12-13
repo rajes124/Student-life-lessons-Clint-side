@@ -1,5 +1,2 @@
-import React from "react";
-
-const LessonDetails = () => <div>Lesson Details (premium content blurred)</div>;
-
+const LessonDetails = () => <h1>Lesson Details</h1>;
 export default LessonDetails;

@@ -1,139 +1,164 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
-  const [user, setUser] = useState(null);
-  const [openDropdown, setOpenDropdown] = useState(false);
-  const [openMenu, setOpenMenu] = useState(false);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
+  const { currentUser, userData } = useAuth();
+  const [open, setOpen] = useState(false);
 
   const handleLogout = async () => {
-    await signOut(auth);
-    setOpenDropdown(false);
+    try {
+      await signOut(auth);
+      toast.success("Logged out successfully");
+    } catch {
+      toast.error("Logout failed");
+    }
   };
 
+  const navLinkClass = ({ isActive }) =>
+    isActive
+      ? "text-indigo-600 font-semibold"
+      : "hover:text-indigo-500";
+
   return (
-    <nav className="w-full bg-green-400 text-white shadow-md">
-      <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
 
         {/* Logo */}
-        <div className="flex items-center gap-2">
-          <span className="text-2xl">📘</span>
-          <h1 className="font-bold text-lg">Student Life Lessons</h1>
-        </div>
+        <Link to="/" className="text-2xl font-bold text-indigo-700">
+          Student Life Lessons
+        </Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex items-center gap-6">
-          <Link to="/" className="hover:text-blue-400">Home</Link>
-          <Link to="/public-lessons" className="hover:text-blue-400">Public Lessons</Link>
-          <Link to="/pricing" className="hover:text-blue-400">Pricing</Link>
-          <Link to="/about" className="hover:text-blue-400">About</Link>
+          <NavLink to="/" className={navLinkClass}>Home</NavLink>
+          <NavLink to="/public-lessons" className={navLinkClass}>Lessons</NavLink>
 
-          {user && (
-            <>
-              <Link to="/add-lesson" className="hover:text-blue-400">Add Lesson</Link>
-              <Link to="/my-lessons" className="hover:text-blue-400">My Lessons</Link>
-              <Link to="/dashboard" className="hover:text-blue-400">Dashboard</Link>
-            </>
+          {currentUser && (
+            <NavLink to="/pricing" className={navLinkClass}>
+              Premium
+            </NavLink>
           )}
-        </div>
 
-        {/* Right Side */}
-        <div className="hidden md:flex items-center gap-4">
-          {!user ? (
+          {currentUser ? (
             <>
-              <Link to="/login" className="hover:text-blue-300">Login</Link>
-              <Link to="/register" className="bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700">
-                Register
-              </Link>
+              <NavLink to="/dashboard" className={navLinkClass}>
+                Dashboard
+              </NavLink>
+
+              {userData?.role === "admin" && (
+                <NavLink to="/dashboard/admin" className="text-red-600 font-semibold">
+                  Admin
+                </NavLink>
+              )}
+
+              {/* Profile Dropdown */}
+              <div className="relative">
+                <img
+                  src={currentUser.photoURL || "https://i.ibb.co/9yK7qfM/user.png"}
+                  alt="profile"
+                  onClick={() => setOpen(!open)}
+                  className="w-10 h-10 rounded-full border cursor-pointer"
+                />
+
+                {open && (
+                  <div className="absolute right-0 mt-3 w-48 bg-white rounded-lg shadow-lg p-4 space-y-3">
+                    <p className="font-semibold">
+                      {currentUser.displayName || "User"}
+                    </p>
+
+                    <Link
+                      to="/dashboard/profile"
+                      className="block hover:text-indigo-600"
+                      onClick={() => setOpen(false)}
+                    >
+                      Update Profile
+                    </Link>
+
+                    <button
+                      onClick={handleLogout}
+                      className="text-red-600 w-full text-left hover:underline"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             </>
           ) : (
-            <div className="relative">
-              <div
-                className="flex items-center gap-2 cursor-pointer"
-                onClick={() => setOpenDropdown(!openDropdown)}
+            <>
+              <NavLink to="/login" className={navLinkClass}>
+                Login
+              </NavLink>
+              <NavLink
+                to="/register"
+                className="bg-indigo-600 text-white px-4 py-2 rounded-lg"
               >
-                <img
-                  src={user.photoURL || "https://i.pravatar.cc/40"}
-                  alt="avatar"
-                  className="w-10 h-10 rounded-full"
-                />
-                <span className="font-semibold">{user.displayName || "User"}</span>
-              </div>
-
-              {openDropdown && (
-                <div className="absolute right-0 mt-3 bg-white text-black rounded-lg shadow-lg w-48 py-2 z-50">
-                  
-                  <div className="px-4 pb-2 border-b">
-                    <p className="font-semibold">{user.displayName}</p>
-                    <p className="text-sm text-gray-600">{user.email}</p>
-                  </div>
-
-                  <Link to="/profile" className="block px-4 py-2 hover:bg-gray-100">Profile</Link>
-                  <Link to="/dashboard" className="block px-4 py-2 hover:bg-gray-100">Dashboard</Link>
-                  <Link to="/my-lessons" className="block px-4 py-2 hover:bg-gray-100">My Lessons</Link>
-
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
+                Register
+              </NavLink>
+            </>
           )}
         </div>
 
-        {/* Mobile Button */}
-        <button className="md:hidden text-2xl" onClick={() => setOpenMenu(!openMenu)}>
+        {/* Mobile Menu Button */}
+        <button
+          className="md:hidden"
+          onClick={() => setOpen(!open)}
+        >
           ☰
         </button>
       </div>
 
       {/* Mobile Menu */}
-      {openMenu && (
-        <div className="md:hidden bg-gray-800 px-4 py-4 space-y-3">
-          
-          <Link to="/" className="block hover:text-blue-400">Home</Link>
-          <Link to="/public-lessons" className="block hover:text-blue-400">Public Lessons</Link>
-          <Link to="/pricing" className="block hover:text-blue-400">Pricing</Link>
-          <Link to="/about" className="block hover:text-blue-400">About</Link>
+      {open && (
+        <div className="md:hidden bg-white px-6 py-4 space-y-3 shadow">
+          <NavLink to="/" onClick={() => setOpen(false)}>Home</NavLink>
+          <NavLink to="/public-lessons" onClick={() => setOpen(false)}>Lessons</NavLink>
 
-          {user && (
-            <>
-              <Link to="/add-lesson" className="block hover:text-blue-400">Add Lesson</Link>
-              <Link to="/my-lessons" className="block hover:text-blue-400">My Lessons</Link>
-              <Link to="/dashboard" className="block hover:text-blue-400">Dashboard</Link>
-              <Link to="/profile" className="block hover:text-blue-400">Profile</Link>
-            </>
+          {currentUser && (
+            <NavLink to="/pricing" onClick={() => setOpen(false)}>
+              Premium
+            </NavLink>
           )}
 
-          {!user ? (
+          {currentUser ? (
             <>
-              <Link to="/login" className="block hover:text-blue-300">Login</Link>
-              <Link
-                to="/register"
-                className="block bg-blue-600 px-4 py-2 rounded-md hover:bg-blue-700 w-fit mt-2"
+              <NavLink to="/dashboard" onClick={() => setOpen(false)}>
+                Dashboard
+              </NavLink>
+
+              {userData?.role === "admin" && (
+                <NavLink to="/dashboard/admin" className="text-red-600">
+                  Admin
+                </NavLink>
+              )}
+
+              <NavLink
+                to="/dashboard/profile"
+                onClick={() => setOpen(false)}
               >
-                Register
-              </Link>
+                Update Profile
+              </NavLink>
+
+              <button
+                onClick={handleLogout}
+                className="text-red-600 block"
+              >
+                Logout
+              </button>
             </>
           ) : (
-            <button
-              onClick={handleLogout}
-              className="text-red-400 hover:text-red-300 mt-2"
-            >
-              Logout
-            </button>
+            <>
+              <NavLink to="/login" onClick={() => setOpen(false)}>
+                Login
+              </NavLink>
+              <NavLink to="/register" onClick={() => setOpen(false)}>
+                Register
+              </NavLink>
+            </>
           )}
         </div>
       )}

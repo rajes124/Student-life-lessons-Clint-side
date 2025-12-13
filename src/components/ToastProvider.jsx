@@ -1,14 +1,8 @@
-import React from "react";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-
+// সাধারণত react-hot-toast-এ প্রোভাইডার লাগে না। তাই এটা optional।
+// যদি custom toast context বানাও তাহলে এখানে লিখো।
+// এখানে empty রাখলাম।
 const ToastProvider = ({ children }) => {
-  return (
-    <>
-      {children}
-      <ToastContainer position="top-right" autoClose={3000} />
-    </>
-  );
+  return <>{children}</>;
 };
 
 export default ToastProvider;

@@ -1,19 +1,21 @@
-import React from "react";
-import HeroSlider from "./HeroSlider";
-import FeaturedLessons from "./FeaturedLessons";
-import MostSavedLessons from "./MostSaveLessons";
-import TopContributors from "./TopContributors";
+// src/pages/Home/Home.jsx
+import HeroSlider from './HeroSlider';
+import FeaturedLessons from './FeaturedLessons';
+import WhyStudentLife from "./WhyStudentLifeLessons";
 
-const Home = () => (
-  <div>
-    <HeroSlider />
-    
-    <FeaturedLessons />
+import MostSavedLessons from './MostSavedLessons';
+import TopContributors from './TopContributors';
 
-    <MostSavedLessons/>
-
-    <TopContributors/>
-  </div>
-);
+const Home = () => {
+  return (
+    <div>
+      <HeroSlider />
+      <FeaturedLessons />
+      <WhyStudentLife />
+      <MostSavedLessons />
+      <TopContributors />
+    </div>
+  );
+};
 
 export default Home;

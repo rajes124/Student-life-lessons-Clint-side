@@ -1,15 +1,15 @@
 import { createBrowserRouter } from "react-router-dom";
+import RootLayout from "../layout/RootLayout";
 
-// Layouts
-import RootLayout from "../layout/Rootlayout";
-import DashboardLayout from "../dashboard/DashboardLayout";
-
-// Pages
 import Home from "../pages/Home/Home";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
-import Profile from "../components/UpdateProfile/profile";
-import Publiclessons from "../pages/Public/Publiclessons";
+import PublicLessons from "../pages/PublicLessons";
+import LessonDetails from "../pages/Lessons/LessonDetails";
+import Pricing from "../pages/Pricing/Pricing";
+import PaymentSuccess from "../pages/Pricing/PaymentSuccess";
+import PaymentCancel from "../pages/Pricing/PaymentCancel";
+import NotFound from "../pages/NotFound";
 
 export const router = createBrowserRouter([
   {
@@ -19,20 +19,12 @@ export const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
-      { path: "profile", element: <Profile /> },
-      { path: "public-lessons", element: <Publiclessons /> },
+      { path: "public-lessons", element: <PublicLessons /> },
+      { path: "lessons/:id", element: <LessonDetails /> },
+      { path: "pricing", element: <Pricing /> },
+      { path: "payment-success", element: <PaymentSuccess /> },
+      { path: "payment-cancel", element: <PaymentCancel /> },
     ],
   },
-
-  // Dashboard Routes
-  {
-    path: "/dashboard",
-    element: <DashboardLayout />,
-    children: [
-      { index: true, element: <div>Dashboard Overview</div> },
-      { path: "profile", element: <div>User Profile</div> },
-      { path: "settings", element: <div>Settings</div> },
-      { path: "messages", element: <div>Messages</div> },
-    ],
-  },
+  { path: "*", element: <NotFound /> },
 ]);

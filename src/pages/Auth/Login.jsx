@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { auth, googleProvider } from "../../firebase/firebaseConfig";
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
+
 import { Link, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 
@@ -35,17 +36,21 @@ const Login = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center bg-gray-100 px-4 overflow-hidden">
-      <video
-        autoPlay
-        loop
-        muted
-        className="absolute top-0 left-0 w-full h-full object-cover z-0"
-      >
-        <source src="/src/assets/background.mp4" type="video/mp4" />
-      </video>
 
+    <video
+  autoPlay
+  loop
+  muted
+  className="absolute top-0 left-0 w-full h-full object-cover z-0"
+>
+  <source src="/background.mp4" type="video/mp4" />
+</video>
+
+
+      {/* Black Overlay */}
       <div className="absolute top-0 left-0 w-full h-full bg-black/40 backdrop-blur-sm z-10"></div>
 
+      {/* Login Card */}
       <div className="relative z-20 w-full max-w-md bg-white/80 shadow-2xl rounded-2xl p-8 animate-[slideUp_0.6s_ease]">
         <h2 className="text-3xl font-bold text-center mb-6 text-blue-600">Login</h2>
 
@@ -82,7 +87,7 @@ const Login = () => {
         </button>
 
         <p className="text-center mt-4 text-white">
-          Don't have an account? {" "}
+          Don't have an account?{" "}
           <Link to="/register" className="text-blue-400 font-semibold">
             Register here
           </Link>

@@ -1,5 +1,5 @@
 const App = () => {
-  return <div>App Root Loaded</div>;
+  return null;
 };
 
 export default App;
