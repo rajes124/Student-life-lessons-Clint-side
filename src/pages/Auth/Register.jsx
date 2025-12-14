@@ -1,157 +1,148 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
 import { auth, googleProvider } from "../../firebase/firebaseConfig";
-import {
-  createUserWithEmailAndPassword,
-  updateProfile,
-  signInWithPopup,
-} from "firebase/auth";
-import toast from "react-hot-toast";
-
-import { Link, useNavigate } from "react-router-dom";
-import { FcGoogle } from "react-icons/fc";
-import { registerSchema } from "../../utils/validation";
+import { toast } from 'react-toastify';
 
 const Register = () => {
-  const [name, setName] = useState("");
-  const [photoURL, setPhotoURL] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [photoURL, setPhotoURL] = useState('');
   const navigate = useNavigate();
 
-  const saveUserToDB = async (user) => {
-    try {
-      await fetch("https://student-life-lessons-backend.onrender.com/api/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          uid: user.uid,
-          email: user.email,
-          displayName: user.displayName || name,
-          photoURL: user.photoURL || photoURL || "",
-        }),
-      });
-    } catch (err) {
-      console.log("DB save optional failed");
-    }
+  const validatePassword = (pass) => {
+    if (pass.length < 6) return 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে';
+    if (!/[A-Z]/.test(pass)) return 'পাসওয়ার্ডে একটি বড় হাতের অক্ষর থাকতে হবে';
+    if (!/[a-z]/.test(pass)) return 'পাসওয়ার্ডে একটি ছোট হাতের অক্ষর থাকতে হবে';
+    return null;
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
-    const result = registerSchema.safeParse({
-      name,
-      email,
-      password,
-      photoURL,
-    });
-
-    if (!result.success) {
-      return toast.error(result.error.errors[0].message);
+    const error = validatePassword(password);
+    if (error) {
+      toast.error(error);
+      return;
     }
 
     try {
-      const res = await createUserWithEmailAndPassword(auth, email, password);
-
-      await updateProfile(res.user, {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(userCredential.user, {
         displayName: name,
         photoURL: photoURL || null,
       });
-
-      await saveUserToDB(res.user);
-
-      toast.success("Registration successful!");
-      navigate("/login");
+      toast.success('সফলভাবে রেজিস্টার হয়েছে!');
+      navigate('/dashboard');
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || 'রেজিস্ট্রেশন ব্যর্থ');
     }
   };
 
   const handleGoogleRegister = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-
-      await saveUserToDB(result.user);
-
-      toast.success("Google login successful!");
-      navigate("/");
+      await signInWithPopup(auth, googleProvider);
+      toast.success('Google দিয়ে রেজিস্টার সফল!');
+      navigate('/dashboard');
     } catch (error) {
       toast.error(error.message);
     }
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gray-100 px-4 overflow-hidden">
-<video
-  autoPlay
-  loop
-  muted
-  className="absolute top-0 left-0 w-full h-full object-cover z-0"
->
-  <source src="/background.mp4" type="video/mp4" />
-</video>
-
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Video */}
+      <video
+        className="absolute inset-0 w-full h-full object-cover"
+        autoPlay
+        muted
+        loop
+        playsInline
+      >
+        <source src="/background.mp4" type="video/mp4" />
+      </video>
 
       {/* Dark Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black/40 backdrop-blur-sm z-10"></div>
+      <div className="absolute inset-0 bg-black/60"></div>
 
-      {/* Register Card */}
-      <div className="relative z-20 w-full max-w-md bg-white/80 shadow-2xl rounded-2xl p-8 animate-[slideUp_0.6s_ease]">
-        <h2 className="text-3xl font-bold text-center mb-6 text-blue-600">
-          Register
+      {/* Register Card - Glassmorphism */}
+      <div className="relative z-10 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-10 w-full max-w-md mx-4">
+        <h2 className="text-3xl font-bold text-white text-center mb-8">
+          Create Account
         </h2>
 
-        <form onSubmit={handleRegister} className="space-y-4">
-          <input
-            type="text"
-            placeholder="Full Name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-          />
+        <form onSubmit={handleRegister} className="space-y-6">
+          <div>
+            <label className="block text-white/90 font-medium mb-2">Name</label>
+            <input
+              type="text"
+              placeholder="আপনার নাম"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+            />
+          </div>
 
-          <input
-            type="text"
-            placeholder="Photo URL"
-            value={photoURL}
-            onChange={(e) => setPhotoURL(e.target.value)}
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-          />
+          <div>
+            <label className="block text-white/90 font-medium mb-2">Email</label>
+            <input
+              type="email"
+              placeholder="আপনার ইমেইল"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+            />
+          </div>
 
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-          />
+          <div>
+            <label className="block text-white/90 font-medium mb-2">Photo URL </label>
+            <input
+              type="url"
+              placeholder="https://example.com/photo.jpg"
+              value={photoURL}
+              onChange={(e) => setPhotoURL(e.target.value)}
+              className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+            />
+          </div>
 
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-          />
+          <div>
+            <label className="block text-white/90 font-medium mb-2">Password</label>
+            <input
+              type="password"
+              placeholder="পাসওয়ার্ড দিন"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+            />
+          </div>
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+            className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-lg transition duration-300 transform hover:scale-105"
           >
-            Register
+            Sign Up
           </button>
         </form>
 
         <button
           onClick={handleGoogleRegister}
-          className="w-full mt-4 flex items-center justify-center gap-2 bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition"
+          className="w-full mt-4 py-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold rounded-lg shadow-lg flex items-center justify-center gap-3 transition duration-300"
         >
-          <FcGoogle size={24} /> Register / Login with Google
+          <img
+            src="https://developers.google.com/identity/images/g-logo.png"
+            alt="Google"
+            className="w-5 h-5"
+          />
+          Sign up with Google
         </button>
 
-        <p className="text-center mt-4 text-white">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-400 font-semibold">
-            Login here
+        <p className="text-center text-white/80 mt-6">
+          ইতিমধ্যে অ্যাকাউন্ট আছে?{' '}
+          <Link to="/login" className="text-indigo-300 hover:text-indigo-200 underline font-medium">
+            Login
           </Link>
         </p>
       </div>

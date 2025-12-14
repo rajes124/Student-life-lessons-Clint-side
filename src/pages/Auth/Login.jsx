@@ -1,79 +1,85 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from "../../firebase/firebaseConfig";
-import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
-import toast from "react-hot-toast";
-
-import { Link, useNavigate } from "react-router-dom";
-import { FcGoogle } from "react-icons/fc";
+import { toast } from 'react-toastify';
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    if (!email || !password) return toast.error("All fields are required!");
-
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      toast.success("Login successful!");
-      navigate("/");
+      toast.success('সফলভাবে লগইন হয়েছে!');
+      navigate('/dashboard');
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || 'লগইন ব্যর্থ হয়েছে');
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
       await signInWithPopup(auth, googleProvider);
-      toast.success("Login with Google successful!");
-      navigate("/");
+      toast.success('Google দিয়ে লগইন সফল!');
+      navigate('/dashboard');
     } catch (error) {
       toast.error(error.message);
     }
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center bg-gray-100 px-4 overflow-hidden">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Background Video */}
+      <video
+        className="absolute inset-0 w-full h-full object-cover"
+        autoPlay
+        muted
+        loop
+        playsInline
+      >
+        <source src="/background.mp4" type="video/mp4" />
+      </video>
 
-    <video
-  autoPlay
-  loop
-  muted
-  className="absolute top-0 left-0 w-full h-full object-cover z-0"
->
-  <source src="/background.mp4" type="video/mp4" />
-</video>
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/60"></div>
 
+      {/* Login Card - Glassmorphism Effect */}
+      <div className="relative z-10 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-10 w-full max-w-md mx-4">
+        <h2 className="text-3xl font-bold text-white text-center mb-8">
+          Welcome Back
+        </h2>
 
-      {/* Black Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full bg-black/40 backdrop-blur-sm z-10"></div>
+        <form onSubmit={handleLogin} className="space-y-6">
+          <div>
+            <label className="block text-white/90 font-medium mb-2">Email</label>
+            <input
+              type="email"
+              placeholder="আপনার ইমেইল দিন"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+            />
+          </div>
 
-      {/* Login Card */}
-      <div className="relative z-20 w-full max-w-md bg-white/80 shadow-2xl rounded-2xl p-8 animate-[slideUp_0.6s_ease]">
-        <h2 className="text-3xl font-bold text-center mb-6 text-blue-600">Login</h2>
-
-        <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-          />
-
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-400"
-          />
+          <div>
+            <label className="block text-white/90 font-medium mb-2">Password</label>
+            <input
+              type="password"
+              placeholder="পাসওয়ার্ড দিন"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="w-full px-4 py-3 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition"
+            />
+          </div>
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition"
+            className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-lg transition duration-300 transform hover:scale-105"
           >
             Login
           </button>
@@ -81,15 +87,20 @@ const Login = () => {
 
         <button
           onClick={handleGoogleLogin}
-          className="w-full mt-4 flex items-center justify-center gap-2 bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 transition"
+          className="w-full mt-4 py-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold rounded-lg shadow-lg flex items-center justify-center gap-3 transition duration-300"
         >
-          <FcGoogle size={24} /> Login with Google
+          <img
+            src="https://developers.google.com/identity/images/g-logo.png"
+            alt="Google"
+            className="w-5 h-5"
+          />
+          Sign in with Google
         </button>
 
-        <p className="text-center mt-4 text-white">
-          Don't have an account?{" "}
-          <Link to="/register" className="text-blue-400 font-semibold">
-            Register here
+        <p className="text-center text-white/80 mt-6">
+          অ্যাকাউন্ট নেই?{' '}
+          <Link to="/register" className="text-indigo-300 hover:text-indigo-200 underline font-medium">
+            Sign Up
           </Link>
         </p>
       </div>

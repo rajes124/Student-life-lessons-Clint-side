@@ -1,104 +1,65 @@
-// src/pages/Home/HeroSlider.jsx
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Pagination, Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 
 const slides = [
   {
-    title: "Preserve Your Student Wisdom",
-    description: "Every challenge you face today is a lesson for tomorrow. Start documenting your journey now.",
-    buttonText: "Start Writing Your Journey",
-    buttonLink: "/dashboard/add-lesson",
-    gradient: "from-purple-700 to-indigo-900",
+    img: "https://thumbs.dreamstime.com/b/conceptual-illustration-depicting-student-s-journey-towards-bright-future-lone-student-wearing-graduation-cap-stands-414631008.jpg",
+    quote: "Every challenge in student life builds your brighter future",
+    cta: "Explore Lessons"
   },
   {
-    title: "Learn From Real Student Stories",
-    description: "Explore thousands of lessons on exams, relationships, career, mindset, and more.",
-    buttonText: "Explore Public Lessons",
-    buttonLink: "/public-lessons",
-    gradient: "from-indigo-700 to-blue-900",
+    img: "https://thumbs.dreamstime.com/b/graduating-student-viewed-behind-wearing-traditional-cap-gown-academic-hood-looks-out-over-sprawling-illuminated-416863339.jpg",
+    quote: "Rise and shine – Study hard, dream bigger",
+    cta: "Share Your Story"
   },
   {
-    title: "Grow Together as a Community",
-    description: "Share your insights, save favorites, react, comment – and help others grow.",
-    buttonText: "Join the Community",
-    buttonLink: "/register",
-    gradient: "from-purple-800 to-pink-800",
+    img: "https://thumbs.dreamstime.com/b/contemplative-student-backpack-road-sunrise-looking-toward-city-contemplative-student-backpack-road-sunrise-407798656.jpg",
+    quote: "Student life: Lessons beyond the classroom",
+    cta: "Join the Community"
+  },
+  {
+    img: "https://thumbs.dreamstime.com/b/student-graduation-gown-standing-edge-rooftop-overlooking-modern-city-skyline-sunrise-back-view-photo-386341872.jpg",
+    quote: "Balance studies, friends, and personal growth",
+    cta: "Start Your Journey"
   },
 ];
 
-const HeroSlider = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 6000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const goToSlide = (index) => setCurrentSlide(index);
-  const prevSlide = () => setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  const nextSlide = () => setCurrentSlide((prev) => (prev + 1) % slides.length);
-
+export default function HeroSlider() {
   return (
-    <div className="relative w-full h-screen overflow-hidden">
-      {slides.map((slide, index) => (
-        <div
-          key={index}
-          className={`absolute inset-0 flex flex-col items-center justify-center text-center px-6 transition-opacity duration-1000 ${
-            index === currentSlide ? 'opacity-100' : 'opacity-0'
-          }`}
-        >
-          <div className={`absolute inset-0 bg-gradient-to-br ${slide.gradient}`} />
-          <div className="relative z-10 text-white">
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6">
-              {slide.title}
-            </h1>
-            <p className="text-lg md:text-2xl lg:text-3xl mb-10 max-w-4xl">
-              {slide.description}
-            </p>
-            <Link
-              to={slide.buttonLink}
-              className="px-10 py-5 bg-white text-purple-700 text-xl font-bold rounded-full hover:bg-gray-100 transition shadow-2xl"
-            >
-              {slide.buttonText}
-            </Link>
-          </div>
-        </div>
-      ))}
-
-      {/* Dots */}
-      <div className="absolute bottom-10 left-1/2 transform -translate-x-1/2 flex space-x-3 z-20">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`w-3 h-3 rounded-full transition ${
-              index === currentSlide ? 'bg-white w-10' : 'bg-white/50'
-            }`}
-          />
+    <section className="relative h-screen w-full">
+      <Swiper
+        modules={[Autoplay, Pagination, Navigation]}
+        autoplay={{ delay: 5000, disableOnInteraction: false }}
+        pagination={{ clickable: true }}
+        navigation={true}
+        loop={true}
+        className="h-full"
+      >
+        {slides.map((slide, index) => (
+          <SwiperSlide key={index}>
+            <div className="relative h-full w-full">
+              <img 
+                src={slide.img} 
+                alt={`Student life slide ${index + 1}`} 
+                className="object-cover w-full h-full" 
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+                <div className="text-center text-white px-6 max-w-4xl">
+                  <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight">
+                    {slide.quote}
+                  </h1>
+                  <button className="btn btn-primary btn-lg text-lg">
+                    {slide.cta}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </SwiperSlide>
         ))}
-      </div>
-
-      {/* Arrows (simple SVG without heroicons) */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-6 top-1/2 -translate-y-1/2 z-20 text-white hover:text-gray-200"
-      >
-        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-        </svg>
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-6 top-1/2 -translate-y-1/2 z-20 text-white hover:text-gray-200"
-      >
-        <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </button>
-    </div>
+      </Swiper>
+    </section>
   );
-};
-
-export default HeroSlider;  // এই লাইনটা অবশ্যই থাকতে হবে!
+}
