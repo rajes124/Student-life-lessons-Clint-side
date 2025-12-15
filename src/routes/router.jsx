@@ -1,8 +1,12 @@
 // src/routes/router.jsx
 
 import { createBrowserRouter } from "react-router-dom";
-import RootLayout from "../layout/RootLayout";
 
+// Layouts
+import RootLayout from "../layout/RootLayout";
+import DashboardLayout from "../layout/DashboardLayout";
+
+// Public Pages
 import Home from "../pages/Home/Home";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
@@ -13,15 +17,12 @@ import PaymentSuccess from "../pages/Pricing/PaymentSuccess";
 import PaymentCancel from "../pages/Pricing/PaymentCancel";
 import NotFound from "../pages/NotFound";
 
-// Dashboard Layout
-import DashboardLayout from "../layout/DashboardLayout";
-
 // User Dashboard Pages
-import DashboardHome from "../dashboard/user/DashboardHome"; // তোমার ফাইলের নাম অনুযায়ী (যদি UserHome হয় তাহলে চেঞ্জ করো)
+import DashboardHome from "../dashboard/user/DashboardHome";
 import AddLesson from "../dashboard/user/AddLesson";
 import MyLessons from "../dashboard/user/MyLessons";
 import MyFavorites from "../dashboard/user/MyFavorites";
-import Profile from "../dashboard/user/MyProfile"; // বা যদি MyProfile.jsx হয়
+import Profile from "../dashboard/user/MyProfile";
 
 // Admin Dashboard Pages
 import AdminHome from "../dashboard/admin/AdminHome";
@@ -30,10 +31,11 @@ import ManageUsers from "../dashboard/admin/ManageUsers";
 import ReportedLessons from "../dashboard/admin/ReportedLessons";
 
 // Auth Loaders
-import { requireAuth } from "../utils/requireAuth"; // তোমার utils ফোল্ডারে থাকলে
-import { requireAdminAuth } from "../utils/requireAdminAuth"; // অ্যাডমিন চেকের জন্য
+import { requireAuth } from "../utils/requireAuth";
+import { requireAdminAuth } from "../utils/requireAdminAuth";
 
 export const router = createBrowserRouter([
+  // Public Routes (with RootLayout - Navbar + Footer)
   {
     path: "/",
     element: <RootLayout />,
@@ -49,11 +51,11 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // ==================== User Dashboard (Protected) ====================
+  // User Dashboard (Protected)
   {
     path: "/dashboard",
     element: <DashboardLayout />,
-    loader: requireAuth, // লগইন না থাকলে লগইন পেজে পাঠাবে
+    loader: requireAuth,
     children: [
       { index: true, element: <DashboardHome /> },
       { path: "add-lesson", element: <AddLesson /> },
@@ -63,11 +65,11 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // ==================== Admin Dashboard (Protected + Admin Role) ====================
+  // Admin Dashboard (Protected + Admin Role)
   {
     path: "/dashboard/admin",
-    element: <DashboardLayout />, // চাইলে আলাদা AdminLayout বানাতে পারো
-    loader: requireAdminAuth, // শুধু admin হলে ঢুকতে দিবে
+    element: <DashboardLayout />,
+    loader: requireAdminAuth,
     children: [
       { index: true, element: <AdminHome /> },
       { path: "manage-lessons", element: <ManageLessons /> },

@@ -1,7 +1,11 @@
+// src/pages/Auth/Register.jsx
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
 import { auth, googleProvider } from "../../firebase/firebaseConfig";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { db } from "../../firebase/firebaseConfig";
 import { toast } from 'react-toastify';
 
 const Register = () => {
@@ -13,39 +17,68 @@ const Register = () => {
 
   const validatePassword = (pass) => {
     if (pass.length < 6) return 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে';
-    if (!/[A-Z]/.test(pass)) return 'পাসওয়ার্ডে একটি বড় হাতের অক্ষর থাকতে হবে';
-    if (!/[a-z]/.test(pass)) return 'পাসওয়ার্ডে একটি ছোট হাতের অক্ষর থাকতে হবে';
+    if (!/[A-Z]/.test(pass)) return 'পাসওয়ার্ডে একটি বড় হাতের অক্ষর (A-Z) থাকতে হবে';
+    if (!/[a-z]/.test(pass)) return 'পাসওয়ার্ডে একটি ছোট হাতের অক্ষর (a-z) থাকতে হবে';
     return null;
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    const error = validatePassword(password);
-    if (error) {
-      toast.error(error);
+
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      toast.error(passwordError);
       return;
     }
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await updateProfile(userCredential.user, {
+      const user = userCredential.user;
+
+      await updateProfile(user, {
         displayName: name,
         photoURL: photoURL || null,
       });
+
+      await setDoc(doc(db, "users", user.uid), {
+        displayName: name,
+        email: email,
+        photoURL: photoURL || null,
+        role: "user",
+        isPremium: false,
+        createdAt: new Date(),
+      });
+
       toast.success('সফলভাবে রেজিস্টার হয়েছে!');
-      navigate('/dashboard');
+      navigate('/login'); // Register করার পর Login page-এ যাবে
     } catch (error) {
-      toast.error(error.message || 'রেজিস্ট্রেশন ব্যর্থ');
+      toast.error(error.message || 'রেজিস্ট্রেশন ব্যর্থ হয়েছে');
     }
   };
 
   const handleGoogleRegister = async () => {
     try {
-      await signInWithPopup(auth, googleProvider);
+      const result = await signInWithPopup(auth, googleProvider);
+      const user = result.user;
+
+      const userDocRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        await setDoc(userDocRef, {
+          displayName: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL || null,
+          role: "user",
+          isPremium: false,
+          createdAt: new Date(),
+        });
+      }
+
       toast.success('Google দিয়ে রেজিস্টার সফল!');
-      navigate('/dashboard');
+      navigate('/login'); // Google register-এর পরও Login page-এ যাবে
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || 'Google রেজিস্ট্রেশন ব্যর্থ');
     }
   };
 
@@ -60,12 +93,13 @@ const Register = () => {
         playsInline
       >
         <source src="/background.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
       </video>
 
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-black/60"></div>
 
-      {/* Register Card - Glassmorphism */}
+      {/* Register Card */}
       <div className="relative z-10 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-10 w-full max-w-md mx-4">
         <h2 className="text-3xl font-bold text-white text-center mb-8">
           Create Account
@@ -97,7 +131,7 @@ const Register = () => {
           </div>
 
           <div>
-            <label className="block text-white/90 font-medium mb-2">Photo URL </label>
+            <label className="block text-white/90 font-medium mb-2">Photo URL (optional)</label>
             <input
               type="url"
               placeholder="https://example.com/photo.jpg"

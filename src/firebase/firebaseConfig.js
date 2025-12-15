@@ -2,6 +2,7 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore"; // এটা যোগ করো
 
 // Firebase configuration object
 const firebaseConfig = {
@@ -29,4 +30,6 @@ googleProvider.setCustomParameters({
 googleProvider.addScope('profile');
 googleProvider.addScope('email');
 
-export { auth, googleProvider };
+const db = getFirestore(app);
+
+export { auth, googleProvider, db };

@@ -1,3 +1,5 @@
+// src/pages/Auth/Login.jsx
+
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth';
@@ -14,7 +16,7 @@ const Login = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       toast.success('সফলভাবে লগইন হয়েছে!');
-      navigate('/dashboard');
+      navigate('/'); // Home page-এ নিয়ে যাবে (assignment অনুযায়ী)
     } catch (error) {
       toast.error(error.message || 'লগইন ব্যর্থ হয়েছে');
     }
@@ -24,9 +26,9 @@ const Login = () => {
     try {
       await signInWithPopup(auth, googleProvider);
       toast.success('Google দিয়ে লগইন সফল!');
-      navigate('/dashboard');
+      navigate('/'); // Home page-এ নিয়ে যাবে
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.message || 'Google লগইন ব্যর্থ');
     }
   };
 
@@ -41,6 +43,7 @@ const Login = () => {
         playsInline
       >
         <source src="/background.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
       </video>
 
       {/* Dark Overlay */}
