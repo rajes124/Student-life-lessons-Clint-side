@@ -22,10 +22,11 @@ import DashboardHome from "../dashboard/user/DashboardHome";
 import AddLesson from "../dashboard/user/AddLesson";
 import MyLessons from "../dashboard/user/MyLessons";
 import MyFavorites from "../dashboard/user/MyFavorites";
-import Profile from "../dashboard/user/MyProfile";
+import MyProfile from "../dashboard/user/MyProfile";
 
 // Admin Dashboard Pages
 import AdminHome from "../dashboard/admin/AdminHome";
+import AdminPanel from "../dashboard/admin/AdminPanel"; // নতুন import
 import ManageLessons from "../dashboard/admin/ManageLessons";
 import ManageUsers from "../dashboard/admin/ManageUsers";
 import ReportedLessons from "../dashboard/admin/ReportedLessons";
@@ -52,6 +53,7 @@ export const router = createBrowserRouter([
   },
 
   // User Dashboard (Protected)
+   // User Dashboard (Protected)
   {
     path: "/dashboard",
     element: <DashboardLayout />,
@@ -61,7 +63,7 @@ export const router = createBrowserRouter([
       { path: "add-lesson", element: <AddLesson /> },
       { path: "my-lessons", element: <MyLessons /> },
       { path: "my-favorites", element: <MyFavorites /> },
-      { path: "profile", element: <Profile /> },
+      { path: "profile", element: <MyProfile /> } // এটা যোগ করো
     ],
   },
 
@@ -71,7 +73,8 @@ export const router = createBrowserRouter([
     element: <DashboardLayout />,
     loader: requireAdminAuth,
     children: [
-      { index: true, element: <AdminHome /> },
+      { index: true, element: <AdminHome /> }, // admin home overview
+      { path: "panel", element: <AdminPanel /> }, // নতুন route – full admin panel
       { path: "manage-lessons", element: <ManageLessons /> },
       { path: "manage-users", element: <ManageUsers /> },
       { path: "reported-lessons", element: <ReportedLessons /> },

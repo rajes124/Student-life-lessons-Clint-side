@@ -3,65 +3,95 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import {
   onAuthStateChanged,
+  updateProfile, // profile update-এর জন্য
 } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
-import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../firebase/firebaseConfig"; // নিশ্চিত করো db export করা আছে
+import api from "../utils/api"; // তোমার axios wrapper
+import toast from "react-hot-toast";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
-  const [userData, setUserData] = useState(null); // { role: "admin"/"user", isPremium: true/false }
+  const [userData, setUserData] = useState(null); // MongoDB থেকে { role, isPremium, name, photoURL }
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setCurrentUser(user);
+  const unsubscribe = onAuthStateChanged(auth, async (user) => {
+    setCurrentUser(user);
 
-      if (user) {
-        // Firestore থেকে real-time user data নিয়ে আসো
-        const userDocRef = doc(db, "users", user.uid);
-
-        const unsubDoc = onSnapshot(
-          userDocRef,
-          (docSnap) => {
-            if (docSnap.exists()) {
-              const data = docSnap.data();
-              setUserData(data);
-              console.log("User data loaded:", data); // debug এর জন্য (পরে মুছে ফেলতে পারো)
-            } else {
-              setUserData(null);
-            }
-            setLoading(false);
-          },
-          (error) => {
-            console.error("Firestore snapshot error:", error);
-            setLoading(false);
+    if (user) {
+      try {
+        // প্রথমে user data load করার চেষ্টা করো
+        const res = await api.get(`/users/${user.uid}`);
+        setUserData(res.data);
+      } catch (error) {
+        if (error.response?.status === 404) {
+          // User not found → create new user
+          try {
+         await api.post("/users/create", { // /api/users/create হবে
+  firebaseUid: user.uid,
+  name: user.displayName || "User",
+  email: user.email,
+  photoURL: user.photoURL || null,
+});
+            // Create করার পর আবার load করো
+            const res = await api.get(`/users/${user.uid}`);
+            setUserData(res.data);
+          } catch (createError) {
+            console.error("Failed to create user:", createError);
+            toast.error("Failed to create profile");
           }
-        );
-
-        // cleanup document listener
-        return () => unsubDoc();
-      } else {
-        setUserData(null);
+        } else {
+          console.error("Failed to load user data:", error);
+          toast.error("Failed to load profile data");
+        }
+      } finally {
         setLoading(false);
       }
+    } else {
+      setUserData(null);
+      setLoading(false);
+    }
+  });
+
+  return () => unsubscribe();
+}, []);
+  // Profile update function (Firebase Auth + MongoDB sync)
+  const updateUserProfile = async (displayName, photoURL) => {
+    if (!currentUser) throw new Error("No user logged in");
+
+    // Firebase Auth update
+    await updateProfile(currentUser, {
+      displayName,
+      photoURL: photoURL || null,
     });
 
-    // cleanup auth listener
-    return () => unsubscribe();
-  }, []);
+    // MongoDB-এ update
+    try {
+      await api.put(`/users/${currentUser.uid}`, {
+        name: displayName,
+        photoURL: photoURL || null,
+      });
+
+      // Local state update
+      setCurrentUser({ ...currentUser, displayName, photoURL });
+      setUserData({ ...userData, name: displayName, photoURL });
+    } catch (error) {
+      console.error("MongoDB profile update failed:", error);
+      throw error;
+    }
+  };
 
   const value = {
     currentUser,
-    userData,     // এটা দিয়ে premium badge ও admin role চেক করব
+    userData, // MongoDB থেকে role, isPremium
     loading,
+    updateUserProfile, // profile update function
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {/* loading থাকলে সুন্দর spinner দেখাও */}
       {loading ? (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
           <div className="text-center">

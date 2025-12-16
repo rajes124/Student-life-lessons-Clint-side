@@ -71,14 +71,14 @@ const Navbar = () => {
               </NavLink>
 
               {/* Admin Link – শুধু admin হলে দেখাবে */}
-              {userData?.role === "admin" && (
-                <NavLink
-                  to="/dashboard/admin"
-                  className="text-red-600 font-bold hover:text-red-800 transition ml-4"
-                >
-                  Admin
-                </NavLink>
-              )}
+            {userData?.role === "admin" && (
+  <NavLink
+    to="/dashboard/admin/panel" // এখানে panel যোগ করো
+    className="text-red-600 font-bold hover:text-red-800 transition ml-4"
+  >
+    Admin
+  </NavLink>
+)}
 
               {/* Profile Dropdown */}
               <div className="relative">

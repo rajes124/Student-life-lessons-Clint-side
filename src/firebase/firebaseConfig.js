@@ -33,3 +33,8 @@ googleProvider.addScope('email');
 const db = getFirestore(app);
 
 export { auth, googleProvider, db };
+
+
+
+
+//75ZPqybEqBXuXIQupegsYGeynOs2
