@@ -2,8 +2,7 @@
 
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { db } from "../../firebase/firebaseConfig";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import api from "../../utils/api"; // নতুন api import (axios wrapper)
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -51,7 +50,7 @@ const AddLesson = () => {
     setLoading(true);
 
     try {
-      await addDoc(collection(db, "lessons"), {
+      await api.post("/lessons/add", {
         title,
         description,
         category,
@@ -59,20 +58,13 @@ const AddLesson = () => {
         imageURL: imageURL || null,
         visibility,
         accessLevel,
-        creatorId: currentUser.uid,
-        creatorName: currentUser.displayName || "Anonymous",
-        creatorPhoto: currentUser.photoURL || null,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-        likes: [],
-        favorites: [],
       });
 
       toast.success("Lesson added successfully!");
       navigate("/dashboard/my-lessons");
     } catch (error) {
+      console.error("Add lesson error:", error);
       toast.error("Failed to add lesson");
-      console.error(error);
     } finally {
       setLoading(false);
     }
