@@ -2,7 +2,6 @@
 
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore"; // এটা যোগ করো
 
 // Firebase configuration object
 const firebaseConfig = {
@@ -21,7 +20,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-// 🔥 এখানে যোগ করো 🔥
+// Google sign-in prompt
 googleProvider.setCustomParameters({
   prompt: 'select_account'
 });
@@ -30,11 +29,7 @@ googleProvider.setCustomParameters({
 googleProvider.addScope('profile');
 googleProvider.addScope('email');
 
-const db = getFirestore(app);
+// 🔥 Firestore remove করা হয়েছে 🔥
+// কোনো db export করা হয়নি – কারণ আমরা MongoDB use করছি
 
-export { auth, googleProvider, db };
-
-
-
-
-//75ZPqybEqBXuXIQupegsYGeynOs2
+export { auth, googleProvider };

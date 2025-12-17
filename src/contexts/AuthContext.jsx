@@ -1,93 +1,93 @@
 // src/contexts/AuthContext.jsx
 
 import { createContext, useContext, useEffect, useState } from "react";
-import {
-  onAuthStateChanged,
-  updateProfile, // profile update-এর জন্য
-} from "firebase/auth";
+import { onAuthStateChanged, updateProfile } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
-import api from "../utils/api"; // তোমার axios wrapper
+import api from "../utils/api";
 import toast from "react-hot-toast";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
-  const [userData, setUserData] = useState(null); // MongoDB থেকে { role, isPremium, name, photoURL }
+  const [userData, setUserData] = useState(null); // MongoDB user
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-  const unsubscribe = onAuthStateChanged(auth, async (user) => {
-    setCurrentUser(user);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setCurrentUser(user);
 
-    if (user) {
-      try {
-        // প্রথমে user data load করার চেষ্টা করো
-        const res = await api.get(`/users/${user.uid}`);
-        setUserData(res.data);
-      } catch (error) {
-        if (error.response?.status === 404) {
-          // User not found → create new user
-          try {
-         await api.post("/users/create", { // /api/users/create হবে
-  firebaseUid: user.uid,
-  name: user.displayName || "User",
-  email: user.email,
-  photoURL: user.photoURL || null,
-});
-            // Create করার পর আবার load করো
-            const res = await api.get(`/users/${user.uid}`);
-            setUserData(res.data);
-          } catch (createError) {
-            console.error("Failed to create user:", createError);
-            toast.error("Failed to create profile");
+      if (user) {
+        try {
+          // 🔹 Step 1: Try load user
+          const res = await api.get(`/users/${user.uid}`);
+          setUserData(res.data);
+        } catch (error) {
+          if (error.response?.status === 404) {
+            // 🔹 Step 2: User not found → create
+            try {
+              await api.post("/users/create", {
+                firebaseUid: user.uid,
+                name: user.displayName || "User",
+                email: user.email,
+                photoURL: user.photoURL || null,
+              });
+
+              // 🔹 Step 3: Reload user after create
+              const res = await api.get(`/users/${user.uid}`);
+              setUserData(res.data);
+            } catch (createError) {
+              console.error("Create user failed:", createError);
+              toast.error("Failed to create user profile");
+            }
+          } else {
+            console.error("Load user failed:", error);
+            toast.error("Failed to load user profile");
           }
-        } else {
-          console.error("Failed to load user data:", error);
-          toast.error("Failed to load profile data");
+        } finally {
+          setLoading(false);
         }
-      } finally {
+      } else {
+        setUserData(null);
         setLoading(false);
       }
-    } else {
-      setUserData(null);
-      setLoading(false);
-    }
-  });
+    });
 
-  return () => unsubscribe();
-}, []);
-  // Profile update function (Firebase Auth + MongoDB sync)
+    return () => unsubscribe();
+  }, []);
+
+  /* =========================
+     Profile Update (Firebase + MongoDB)
+     ========================= */
   const updateUserProfile = async (displayName, photoURL) => {
     if (!currentUser) throw new Error("No user logged in");
 
-    // Firebase Auth update
+    // Firebase update
     await updateProfile(currentUser, {
       displayName,
       photoURL: photoURL || null,
     });
 
-    // MongoDB-এ update
-    try {
-      await api.put(`/users/${currentUser.uid}`, {
-        name: displayName,
-        photoURL: photoURL || null,
-      });
+    // MongoDB update
+    await api.put(`/users/${currentUser.uid}`, {
+      name: displayName,
+      photoURL: photoURL || null,
+    });
 
-      // Local state update
-      setCurrentUser({ ...currentUser, displayName, photoURL });
-      setUserData({ ...userData, name: displayName, photoURL });
-    } catch (error) {
-      console.error("MongoDB profile update failed:", error);
-      throw error;
-    }
+    // Local state sync
+    setCurrentUser({ ...currentUser, displayName, photoURL });
+    setUserData((prev) => ({
+      ...prev,
+      name: displayName,
+      photoURL,
+    }));
   };
 
   const value = {
     currentUser,
-    userData, // MongoDB থেকে role, isPremium
+    userData,
     loading,
-    updateUserProfile, // profile update function
+    updateUserProfile,
   };
 
   return (
@@ -96,7 +96,9 @@ export const AuthProvider = ({ children }) => {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-50 to-purple-50">
           <div className="text-center">
             <div className="w-16 h-16 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-xl font-semibold text-indigo-700">Loading Student Life Lessons...</p>
+            <p className="text-xl font-semibold text-indigo-700">
+              Loading Student Life Lessons...
+            </p>
           </div>
         </div>
       ) : (

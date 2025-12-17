@@ -10,24 +10,25 @@ const MyProfile = () => {
   const [photoURL, setPhotoURL] = useState(currentUser?.photoURL || "");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (name === currentUser?.displayName && photoURL === currentUser?.photoURL) {
-      toast.info("No changes made");
-      return;
-    }
+ const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    setLoading(true);
-    try {
-      await updateUserProfile(name, photoURL);
-      toast.success("Profile updated successfully!");
-    } catch (error) {
-      toast.error("Failed to update profile");
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (name === currentUser?.displayName && photoURL === currentUser?.photoURL) {
+    toast("No changes made"); // toast.info → toast() করো
+    return;
+  }
+
+  setLoading(true);
+  try {
+    await updateUserProfile(name, photoURL);
+    toast.success("Profile updated successfully!");
+  } catch (error) {
+    toast.error("Failed to update profile");
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="max-w-4xl mx-auto p-8 bg-white rounded-3xl shadow-2xl mt-10">

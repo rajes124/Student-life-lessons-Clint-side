@@ -4,33 +4,33 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, signInWithPopup, updateProfile } from 'firebase/auth';
 import { auth, googleProvider } from "../../firebase/firebaseConfig";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { db } from "../../firebase/firebaseConfig";
-import { toast } from 'react-toastify';
+import toast from "react-hot-toast";
 
 const Register = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [photoURL, setPhotoURL] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  const validatePassword = (pass) => {
-    if (pass.length < 6) return 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে';
-    if (!/[A-Z]/.test(pass)) return 'পাসওয়ার্ডে একটি বড় হাতের অক্ষর (A-Z) থাকতে হবে';
-    if (!/[a-z]/.test(pass)) return 'পাসওয়ার্ডে একটি ছোট হাতের অক্ষর (a-z) থাকতে হবে';
-    return null;
-  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
 
-    const passwordError = validatePassword(password);
-    if (passwordError) {
-      toast.error(passwordError);
+    if (!email.trim()) {
+      toast.error("ইমেইল দিন");
+      return;
+    }
+    if (!password.trim()) {
+      toast.error("পাসওয়ার্ড দিন");
+      return;
+    }
+    if (password.length < 6) {
+      toast.error("পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে");
       return;
     }
 
+    setLoading(true);
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
@@ -40,45 +40,27 @@ const Register = () => {
         photoURL: photoURL || null,
       });
 
-      await setDoc(doc(db, "users", user.uid), {
-        displayName: name,
-        email: email,
-        photoURL: photoURL || null,
-        role: "user",
-        isPremium: false,
-        createdAt: new Date(),
-      });
-
       toast.success('সফলভাবে রেজিস্টার হয়েছে!');
-      navigate('/login'); // Register করার পর Login page-এ যাবে
+      navigate('/login'); // ← Register করার পর Login page-এ নিয়ে যাবে
     } catch (error) {
-      toast.error(error.message || 'রেজিস্ট্রেশন ব্যর্থ হয়েছে');
+      toast.error("রেজিস্ট্রেশন ব্যর্থ হয়েছে");
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleGoogleRegister = async () => {
+    setLoading(true);
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
-
-      const userDocRef = doc(db, "users", user.uid);
-      const userDoc = await getDoc(userDocRef);
-
-      if (!userDoc.exists()) {
-        await setDoc(userDocRef, {
-          displayName: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL || null,
-          role: "user",
-          isPremium: false,
-          createdAt: new Date(),
-        });
-      }
-
+      await signInWithPopup(auth, googleProvider);
       toast.success('Google দিয়ে রেজিস্টার সফল!');
-      navigate('/login'); // Google register-এর পরও Login page-এ যাবে
+      navigate('/login'); // ← Google register-এর পরও Login page-এ যাবে
     } catch (error) {
-      toast.error(error.message || 'Google রেজিস্ট্রেশন ব্যর্থ');
+      toast.error("Google রেজিস্ট্রেশন ব্যর্থ");
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -155,15 +137,17 @@ const Register = () => {
 
           <button
             type="submit"
-            className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-lg transition duration-300 transform hover:scale-105"
+            disabled={loading}
+            className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg shadow-lg transition transform hover:scale-105 disabled:opacity-70"
           >
-            Sign Up
+            {loading ? "রেজিস্টার হচ্ছে..." : "Sign Up"}
           </button>
         </form>
 
         <button
           onClick={handleGoogleRegister}
-          className="w-full mt-4 py-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold rounded-lg shadow-lg flex items-center justify-center gap-3 transition duration-300"
+          disabled={loading}
+          className="w-full mt-4 py-4 bg-white hover:bg-gray-100 text-gray-800 font-semibold rounded-lg shadow-lg flex items-center justify-center gap-3 transition"
         >
           <img
             src="https://developers.google.com/identity/images/g-logo.png"

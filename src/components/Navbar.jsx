@@ -40,6 +40,10 @@ const Navbar = () => {
         <div className="hidden md:flex flex-1 justify-center gap-8">
           {currentUser ? (
             <>
+              {/* Logged in user-এ Home দেখাবে */}
+              <NavLink to="/" className={navLinkClass}>
+                Home
+              </NavLink>
               <NavLink to="/dashboard/add-lesson" className={navLinkClass}>
                 Add Lesson
               </NavLink>
@@ -71,14 +75,14 @@ const Navbar = () => {
               </NavLink>
 
               {/* Admin Link – শুধু admin হলে দেখাবে */}
-            {userData?.role === "admin" && (
-  <NavLink
-    to="/dashboard/admin/panel" // এখানে panel যোগ করো
-    className="text-red-600 font-bold hover:text-red-800 transition ml-4"
-  >
-    Admin
-  </NavLink>
-)}
+              {userData?.role === "admin" && (
+                <NavLink
+                  to="/dashboard/admin/panel"
+                  className="text-red-600 font-bold hover:text-red-800 transition ml-4"
+                >
+                  Admin
+                </NavLink>
+              )}
 
               {/* Profile Dropdown */}
               <div className="relative">
@@ -101,7 +105,6 @@ const Navbar = () => {
                       </p>
                       <p className="text-sm text-gray-600">{currentUser.email}</p>
 
-                      {/* Premium Badge in Dropdown */}
                       {userData?.isPremium && (
                         <span className="inline-block mt-2 bg-yellow-400 text-indigo-900 px-4 py-1 rounded-full text-sm font-bold">
                           Premium ⭐
@@ -162,6 +165,10 @@ const Navbar = () => {
         <div className="md:hidden bg-white px-6 py-6 space-y-4 shadow-lg border-t border-gray-200">
           {currentUser ? (
             <>
+              {/* Mobile-এও Home দেখাবে */}
+              <NavLink to="/" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">
+                Home
+              </NavLink>
               <NavLink to="/dashboard/add-lesson" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">
                 Add Lesson
               </NavLink>
@@ -177,9 +184,8 @@ const Navbar = () => {
               <NavLink to="/dashboard" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">
                 Dashboard
               </NavLink>
-              {/* Mobile-এও Admin লিঙ্ক */}
               {userData?.role === "admin" && (
-                <NavLink to="/dashboard/admin" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-bold text-red-600">
+                <NavLink to="/dashboard/admin/panel" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-bold text-red-600">
                   Admin
                 </NavLink>
               )}

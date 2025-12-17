@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import { db } from "../../firebase/firebaseConfig";
-import { collection, query, where, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+
+
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 
