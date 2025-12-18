@@ -16,8 +16,8 @@ const PublicLessons = () => {
   const limit = 9; // 3 columns × 3 rows
 
   const { data: response, loading, error } = useAxiosPublic(
-    `/lessons/public?page=${currentPage}&limit=${limit}&search=${searchTerm}&category=${selectedCategory}&emotionalTone=${selectedTone}`
-  );
+  `/public?page=${currentPage}&limit=${limit}&search=${searchTerm}&category=${selectedCategory}&emotionalTone=${selectedTone}`
+);
 
   const lessons = response?.lessons || [];
   const totalPages = response?.totalPages || 1;
@@ -164,7 +164,10 @@ const PublicLessons = () => {
                   {/* Image */}
                   {lesson.imageURL ? (
                     <img
-                      src={lesson.imageURL}
+                      src={
+  lesson.creatorPhoto || 
+  `https://randomuser.me/api/portraits/men/${Math.floor(Math.random() * 100)}.jpg`
+}
                       alt={lesson.title}
                       className="w-full h-64 object-cover"
                     />

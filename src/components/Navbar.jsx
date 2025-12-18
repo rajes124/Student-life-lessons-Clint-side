@@ -96,7 +96,7 @@ const Navbar = () => {
                   <div className="absolute right-0 mt-4 w-64 bg-white shadow-2xl rounded-xl p-6 border border-gray-200">
                     <div className="text-center mb-4">
                       <img
-                        src={currentUser.photoURL || "https://i.ibb.co/9yK7qfM/user.png"}
+                        src={user.photoURL || "https://i.pravatar.cc/150"}
                         alt="profile"
                         className="w-20 h-20 rounded-full mx-auto mb-3 border-4 border-indigo-600"
                       />

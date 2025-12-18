@@ -1,11 +1,10 @@
 // src/dashboard/user/MyLessons.jsx
-
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-
-
+import api from "../../utils/api";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
+import { Heart, Bookmark, Calendar } from "lucide-react"; // icons যোগ করলাম
 
 const MyLessons = () => {
   const { currentUser, userData } = useAuth();
@@ -13,22 +12,18 @@ const MyLessons = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLessons = async () => {
-      if (!currentUser) return;
+    if (!currentUser) {
+      setLoading(false);
+      return;
+    }
 
+    const fetchLessons = async () => {
       try {
-        const q = query(
-          collection(db, "lessons"),
-          where("creatorId", "==", currentUser.uid)
-        );
-        const snapshot = await getDocs(q);
-        const lessonsList = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setLessons(lessonsList);
+        const res = await api.get("/lessons/my-lessons");
+        setLessons(res.data.lessons || res.data || []);
       } catch (error) {
-        toast.error("Failed to load lessons");
+        console.error("Failed to load lessons:", error);
+        toast.error("Failed to load your lessons");
       } finally {
         setLoading(false);
       }
@@ -39,14 +34,11 @@ const MyLessons = () => {
 
   const handleVisibilityChange = async (id, newVisibility) => {
     try {
-      await updateDoc(doc(db, "lessons", id), {
-        visibility: newVisibility,
-        updatedAt: new Date(),
-      });
-      setLessons(lessons.map(l => l.id === id ? { ...l, visibility: newVisibility } : l));
+      await api.put(`/lessons/${id}`, { visibility: newVisibility });
+      setLessons(lessons.map(l => l._id === id ? { ...l, visibility: newVisibility } : l));
       toast.success("Visibility updated");
     } catch (error) {
-      toast.error("Failed to update");
+      toast.error("Failed to update visibility");
     }
   };
 
@@ -57,14 +49,11 @@ const MyLessons = () => {
     }
 
     try {
-      await updateDoc(doc(db, "lessons", id), {
-        accessLevel: newLevel,
-        updatedAt: new Date(),
-      });
-      setLessons(lessons.map(l => l.id === id ? { ...l, accessLevel: newLevel } : l));
+      await api.put(`/lessons/${id}`, { accessLevel: newLevel });
+      setLessons(lessons.map(l => l._id === id ? { ...l, accessLevel: newLevel } : l));
       toast.success("Access level updated");
     } catch (error) {
-      toast.error("Failed to update");
+      toast.error("Failed to update access level");
     }
   };
 
@@ -72,15 +61,17 @@ const MyLessons = () => {
     if (!window.confirm("Are you sure you want to delete this lesson?")) return;
 
     try {
-      await deleteDoc(doc(db, "lessons", id));
-      setLessons(lessons.filter(l => l.id !== id));
+      await api.delete(`/lessons/${id}`);
+      setLessons(lessons.filter(l => l._id !== id));
       toast.success("Lesson deleted");
     } catch (error) {
-      toast.error("Failed to delete");
+      toast.error("Failed to delete lesson");
     }
   };
 
-  if (loading) return <p className="text-center text-xl mt-20">Loading your lessons...</p>;
+  if (loading) {
+    return <p className="text-center text-xl mt-20">Loading your lessons...</p>;
+  }
 
   if (lessons.length === 0) {
     return (
@@ -105,26 +96,45 @@ const MyLessons = () => {
         <table className="w-full border-collapse bg-white shadow-lg rounded-lg">
           <thead>
             <tr className="bg-indigo-600 text-white">
-              <th className="p-4 text-left">Title</th>
+              <th className="p-4 text-left">Lesson</th>
               <th className="p-4 text-left">Category</th>
               <th className="p-4 text-left">Tone</th>
               <th className="p-4 text-left">Visibility</th>
               <th className="p-4 text-left">Access Level</th>
               <th className="p-4 text-left">Created</th>
+              <th className="p-4 text-left">Stats</th>
               <th className="p-4 text-left">Actions</th>
             </tr>
           </thead>
           <tbody>
             {lessons.map((lesson) => (
-              <tr key={lesson.id} className="border-b hover:bg-gray-50">
-                <td className="p-4">{lesson.title}</td>
+              <tr key={lesson._id} className="border-b hover:bg-gray-50">
+                <td className="p-4">
+                  <div className="flex items-center gap-4">
+                    {lesson.imageURL ? (
+                      <img
+                        src={lesson.imageURL}
+                        alt={lesson.title}
+                        className="w-16 h-16 object-cover rounded-lg shadow-md"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 bg-gradient-to-br from-indigo-200 to-purple-300 rounded-lg flex items-center justify-center text-3xl shadow-md">
+                        📚
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-bold text-lg">{lesson.title}</p>
+                      <p className="text-sm text-gray-600 line-clamp-2">{lesson.description}</p>
+                    </div>
+                  </div>
+                </td>
                 <td className="p-4">{lesson.category}</td>
                 <td className="p-4">{lesson.emotionalTone}</td>
                 <td className="p-4">
                   <select
                     value={lesson.visibility}
-                    onChange={(e) => handleVisibilityChange(lesson.id, e.target.value)}
-                    className="border rounded px-2 py-1"
+                    onChange={(e) => handleVisibilityChange(lesson._id, e.target.value)}
+                    className="border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   >
                     <option value="Public">Public</option>
                     <option value="Private">Private</option>
@@ -133,27 +143,42 @@ const MyLessons = () => {
                 <td className="p-4">
                   <select
                     value={lesson.accessLevel}
-                    onChange={(e) => handleAccessLevelChange(lesson.id, e.target.value)}
-                    disabled={!userData?.isPremium && e.target.value === "Premium"}
-                    className="border rounded px-2 py-1"
+                    onChange={(e) => handleAccessLevelChange(lesson._id, e.target.value)}
+                    disabled={!userData?.isPremium}
+                    className="border rounded px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
                   >
                     <option value="Free">Free</option>
                     <option value="Premium">Premium</option>
                   </select>
                 </td>
                 <td className="p-4">
-                  {lesson.createdAt?.toDate().toLocaleDateString()}
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-5 h-5 text-gray-500" />
+                  {new Date(lesson.createdAt).toLocaleDateString()}
+                  </div>
+                </td>
+                <td className="p-4">
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-2">
+                      <Heart className="w-5 h-5 text-red-500" />
+                      <span className="font-medium">{lesson.likesCount || 0}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Bookmark className="w-5 h-5 text-blue-500" />
+                      <span className="font-medium">{lesson.savedBy?.length || 0}</span>
+                    </div>
+                  </div>
                 </td>
                 <td className="p-4">
                   <Link
-                    to={`/lessons/${lesson.id}`}
-                    className="text-blue-600 hover:underline mr-4"
+                    to={`/lessons/${lesson._id}`}
+                    className="text-blue-600 hover:underline mr-6 font-medium"
                   >
-                    View
+                    View Details
                   </Link>
                   <button
-                    onClick={() => handleDelete(lesson.id)}
-                    className="text-red-600 hover:underline"
+                    onClick={() => handleDelete(lesson._id)}
+                    className="text-red-600 hover:underline font-medium"
                   >
                     Delete
                   </button>

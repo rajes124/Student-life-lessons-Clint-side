@@ -1,7 +1,6 @@
-// src/dashboard/user/AddLesson.jsx
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import api from "../../utils/api"; // axios wrapper with Firebase token
+import api from "../../utils/api";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
@@ -44,29 +43,29 @@ const AddLesson = () => {
     setLoading(true);
 
     try {
-      // Axios automatically adds Firebase token from api.js
-     const lesson = {
-  title,
-  description,
-  category,
-  emotionalTone,
-  imageURL: imageURL || null,
-  visibility: visibility?.toLowerCase() || 'private',
-  accessLevel: accessLevel?.toLowerCase() || 'free',
-  creatorId: userId,
+      // 🔥 ONLY FIX ADDED (backend lowercase expects)
+      const payload = {
+        title: title.trim(),
+        description: description.trim(),
+        category,
+        emotionalTone,
+        imageURL: imageURL.trim() || null,
+        visibility: visibility.toLowerCase(),      // ← FIX
+        accessLevel: accessLevel.toLowerCase(),    // ← FIX
+      };
 
-  likes: [],
-  likesCount: 0,
-  savedBy: [],
+      const res = await api.post("/lessons/add", payload);
 
-  isFeatured: false,   // ✅ এখানেই add হবে (BACKEND)
+      toast.success(res.data?.message || "Lesson added successfully! 🎉");
 
-  createdAt: new Date(),
-  updatedAt: new Date()
-};
+      setTitle("");
+      setDescription("");
+      setImageURL("");
+      setCategory("Personal Growth");
+      setEmotionalTone("Motivational");
+      setVisibility("Public");
+      setAccessLevel("Free");
 
-
-      toast.success(res.data?.message || "Lesson added successfully!");
       navigate("/dashboard/my-lessons");
     } catch (error) {
       console.error("Add lesson error:", error);
@@ -74,7 +73,6 @@ const AddLesson = () => {
       if (error.response) {
         if (error.response.status === 401) {
           toast.error("Unauthorized. Please login again.");
-          // Optional: redirect to login
           navigate("/login");
         } else {
           toast.error(error.response.data?.message || "Server Error");
@@ -96,7 +94,6 @@ const AddLesson = () => {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Lesson Title */}
         <div>
           <label className="block text-lg font-medium text-gray-700 mb-2">
             Lesson Title *
@@ -111,7 +108,6 @@ const AddLesson = () => {
           />
         </div>
 
-        {/* Description */}
         <div>
           <label className="block text-lg font-medium text-gray-700 mb-2">
             Full Description / Story *
@@ -126,7 +122,6 @@ const AddLesson = () => {
           />
         </div>
 
-        {/* Category & Emotional Tone */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-lg font-medium text-gray-700 mb-2">
@@ -163,7 +158,6 @@ const AddLesson = () => {
           </div>
         </div>
 
-        {/* Image URL */}
         <div>
           <label className="block text-lg font-medium text-gray-700 mb-2">
             Featured Image URL (optional)
@@ -177,7 +171,6 @@ const AddLesson = () => {
           />
         </div>
 
-        {/* Visibility & Access Level */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-lg font-medium text-gray-700 mb-2">
@@ -218,7 +211,6 @@ const AddLesson = () => {
           </div>
         </div>
 
-        {/* Submit Button */}
         <div className="text-center">
           <button
             type="submit"
