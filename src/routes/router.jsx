@@ -11,7 +11,7 @@ import Home from "../pages/Home/Home";
 import Login from "../pages/Auth/Login";
 import Register from "../pages/Auth/Register";
 import PublicLessons from "../pages/PublicLessons";
-import LessonDetails from "../pages/Lessons/LessonDetails";
+import LessonDetails from "../pages/Lessons/LessonDetails"; // ✅ corrected path
 import Pricing from "../pages/Pricing/Pricing";
 import PaymentSuccess from "../pages/Pricing/PaymentSuccess";
 import PaymentCancel from "../pages/Pricing/PaymentCancel";
@@ -45,7 +45,7 @@ export const router = createBrowserRouter([
       { path: "login", element: <Login /> },
       { path: "register", element: <Register /> },
       { path: "public-lessons", element: <PublicLessons /> },
-      { path: "lessons/:id", element: <LessonDetails /> },
+      { path: "lessons/:id", element: <LessonDetails /> }, // LessonDetails route
       { path: "pricing", element: <Pricing /> },
       { path: "payment-success", element: <PaymentSuccess /> },
       { path: "payment-cancel", element: <PaymentCancel /> },
@@ -53,7 +53,6 @@ export const router = createBrowserRouter([
   },
 
   // User Dashboard (Protected)
-   // User Dashboard (Protected)
   {
     path: "/dashboard",
     element: <DashboardLayout />,
@@ -63,7 +62,7 @@ export const router = createBrowserRouter([
       { path: "add-lesson", element: <AddLesson /> },
       { path: "my-lessons", element: <MyLessons /> },
       { path: "my-favorites", element: <MyFavorites /> },
-      { path: "profile", element: <MyProfile /> } // এটা যোগ করো
+      { path: "profile", element: <MyProfile /> }, // ✅ added
     ],
   },
 

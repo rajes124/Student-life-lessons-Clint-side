@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 const API = axios.create({
-  baseURL: 'http://localhost:5000/api/lessons', // backend public lessons base
+  baseURL: "http://localhost:5000/api/lessons",
 });
 
 const useAxiosPublic = (endpoint, params = {}) => {
@@ -14,9 +14,12 @@ const useAxiosPublic = (endpoint, params = {}) => {
     try {
       setLoading(true);
       const res = await API.get(endpoint, { params });
-      setData(res.data);
+
+      // ✅ ensure array
+      setData(Array.isArray(res.data) ? res.data : res.data?.data || []);
     } catch (err) {
       setError(err.response?.data || err.message);
+      setData([]); // fallback
     } finally {
       setLoading(false);
     }
@@ -24,7 +27,7 @@ const useAxiosPublic = (endpoint, params = {}) => {
 
   useEffect(() => {
     fetchData();
-  }, [endpoint, JSON.stringify(params)]); // refetch if endpoint or params change
+  }, [endpoint, JSON.stringify(params)]);
 
   return { data, loading, error, refetch: fetchData };
 };

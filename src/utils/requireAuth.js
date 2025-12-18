@@ -1,15 +1,14 @@
-// src/utils/requireAuth.js
-
 import { redirect } from "react-router-dom";
 import { auth } from "../firebase/firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
 
 export const requireAuth = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       unsubscribe();
+
       if (!user) {
-        reject(redirect("/login"));
+        resolve(redirect("/login"));
       } else {
         resolve(null);
       }

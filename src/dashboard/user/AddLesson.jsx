@@ -1,13 +1,12 @@
 // src/dashboard/user/AddLesson.jsx
-
 import React, { useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
-import api from "../../utils/api"; // নতুন api import (axios wrapper)
+import api from "../../utils/api"; // axios wrapper with Firebase token
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
 const AddLesson = () => {
-  const { currentUser, userData } = useAuth();
+  const { userData } = useAuth();
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
@@ -27,12 +26,7 @@ const AddLesson = () => {
     "Mistakes Learned",
   ];
 
-  const tones = [
-    "Motivational",
-    "Sad",
-    "Realization",
-    "Gratitude",
-  ];
+  const tones = ["Motivational", "Sad", "Realization", "Gratitude"];
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -50,21 +44,46 @@ const AddLesson = () => {
     setLoading(true);
 
     try {
-      await api.post("/lessons/add", {
-        title,
-        description,
-        category,
-        emotionalTone,
-        imageURL: imageURL || null,
-        visibility,
-        accessLevel,
-      });
+      // Axios automatically adds Firebase token from api.js
+     const lesson = {
+  title,
+  description,
+  category,
+  emotionalTone,
+  imageURL: imageURL || null,
+  visibility: visibility?.toLowerCase() || 'private',
+  accessLevel: accessLevel?.toLowerCase() || 'free',
+  creatorId: userId,
 
-      toast.success("Lesson added successfully!");
+  likes: [],
+  likesCount: 0,
+  savedBy: [],
+
+  isFeatured: false,   // ✅ এখানেই add হবে (BACKEND)
+
+  createdAt: new Date(),
+  updatedAt: new Date()
+};
+
+
+      toast.success(res.data?.message || "Lesson added successfully!");
       navigate("/dashboard/my-lessons");
     } catch (error) {
       console.error("Add lesson error:", error);
-      toast.error("Failed to add lesson");
+
+      if (error.response) {
+        if (error.response.status === 401) {
+          toast.error("Unauthorized. Please login again.");
+          // Optional: redirect to login
+          navigate("/login");
+        } else {
+          toast.error(error.response.data?.message || "Server Error");
+        }
+      } else if (error.request) {
+        toast.error("No response from server. Check backend.");
+      } else {
+        toast.error(error.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -77,6 +96,7 @@ const AddLesson = () => {
       </h2>
 
       <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Lesson Title */}
         <div>
           <label className="block text-lg font-medium text-gray-700 mb-2">
             Lesson Title *
@@ -91,6 +111,7 @@ const AddLesson = () => {
           />
         </div>
 
+        {/* Description */}
         <div>
           <label className="block text-lg font-medium text-gray-700 mb-2">
             Full Description / Story *
@@ -105,6 +126,7 @@ const AddLesson = () => {
           />
         </div>
 
+        {/* Category & Emotional Tone */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-lg font-medium text-gray-700 mb-2">
@@ -141,6 +163,7 @@ const AddLesson = () => {
           </div>
         </div>
 
+        {/* Image URL */}
         <div>
           <label className="block text-lg font-medium text-gray-700 mb-2">
             Featured Image URL (optional)
@@ -154,6 +177,7 @@ const AddLesson = () => {
           />
         </div>
 
+        {/* Visibility & Access Level */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="block text-lg font-medium text-gray-700 mb-2">
@@ -194,6 +218,7 @@ const AddLesson = () => {
           </div>
         </div>
 
+        {/* Submit Button */}
         <div className="text-center">
           <button
             type="submit"
