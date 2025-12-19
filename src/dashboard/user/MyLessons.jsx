@@ -4,7 +4,7 @@ import { useAuth } from "../../contexts/AuthContext";
 import api from "../../utils/api";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
-import { Heart, Bookmark, Calendar } from "lucide-react"; // icons যোগ করলাম
+import { Heart, Bookmark, Calendar } from "lucide-react";
 
 const MyLessons = () => {
   const { currentUser, userData } = useAuth();
@@ -57,18 +57,47 @@ const MyLessons = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this lesson?")) return;
-
-    try {
-      await api.delete(`/lessons/${id}`);
-      setLessons(lessons.filter(l => l._id !== id));
-      toast.success("Lesson deleted");
-    } catch (error) {
-      toast.error("Failed to delete lesson");
+// 🔥 ঠিক করা handleDelete – এখন ১০০% কাজ করবে
+const handleDelete = (id, title) => {
+  const toastId = toast.warn(
+    <div className="text-center">
+      <p className="font-semibold mb-2">Confirm Delete</p>
+      <p className="mb-4">Are you sure you want to <span className="text-red-600 font-bold">permanently delete</span> this lesson?</p>
+      <p className="font-medium text-indigo-700 mb-6">"{title}"</p>
+      <div className="flex justify-center gap-4">
+        <button
+          onClick={async () => {
+            toast.dismiss(toastId); // current toast বন্ধ করো
+            try {
+              await api.delete(`/lessons/${id}`);
+              setLessons(lessons.filter((l) => l._id !== id));
+              toast.success("Lesson deleted successfully!");
+            } catch (error) {
+              toast.error("Failed to delete lesson");
+            }
+          }}
+          className="px-5 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700"
+        >
+          Yes, Delete
+        </button>
+        <button
+          onClick={() => toast.dismiss(toastId)}
+          className="px-5 py-2 bg-gray-400 text-white rounded-lg font-bold hover:bg-gray-500"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>,
+    {
+      position: "top-center",
+      autoClose: false,
+      closeButton: false,
+      closeOnClick: false,
+      draggable: false,
+      className: "bg-white shadow-2xl rounded-xl p-4 border border-gray-200 max-w-md",
     }
-  };
-
+  );
+};
   if (loading) {
     return <p className="text-center text-xl mt-20">Loading your lessons...</p>;
   }
@@ -154,7 +183,7 @@ const MyLessons = () => {
                 <td className="p-4">
                   <div className="flex items-center gap-2">
                     <Calendar className="w-5 h-5 text-gray-500" />
-                  {new Date(lesson.createdAt).toLocaleDateString()}
+                    {new Date(lesson.createdAt).toLocaleDateString()}
                   </div>
                 </td>
                 <td className="p-4">
@@ -176,12 +205,12 @@ const MyLessons = () => {
                   >
                     View Details
                   </Link>
-                  <button
-                    onClick={() => handleDelete(lesson._id)}
-                    className="text-red-600 hover:underline font-medium"
-                  >
-                    Delete
-                  </button>
+                 <button
+  onClick={() => handleDelete(lesson._id, lesson.title)}
+  className="text-red-600 hover:underline font-medium"
+>
+  Delete
+</button>
                 </td>
               </tr>
             ))}

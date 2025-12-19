@@ -51,7 +51,7 @@ const AddLesson = () => {
         emotionalTone,
         imageURL: imageURL.trim() || null,
         visibility: visibility.toLowerCase(),      // ← FIX
-        accessLevel: accessLevel.toLowerCase(),    // ← FIX
+       accessLevel: accessLevel.toLowerCase(),    // ← FIX
       };
 
       const res = await api.post("/lessons/add", payload);
@@ -160,7 +160,7 @@ const AddLesson = () => {
 
         <div>
           <label className="block text-lg font-medium text-gray-700 mb-2">
-            Featured Image URL (optional)
+            Featured Image URL
           </label>
           <input
             type="url"
