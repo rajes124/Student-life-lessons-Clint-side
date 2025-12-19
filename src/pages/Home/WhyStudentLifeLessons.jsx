@@ -20,18 +20,31 @@ const benefits = [
 export default function WhyStudentLifeLessons() {
   return (
     <section className="py-20 px-6 bg-base-200">
-      <h2 className="text-4xl font-bold text-center mb-12">Why Share Student Life Lessons?</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+      <h2 className="text-4xl font-bold text-center mb-16 text-indigo-800">
+        Why Share Student Life Lessons?
+      </h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 max-w-7xl mx-auto">
         {benefits.map((benefit, index) => (
-          <div key={index} className="card bg-base-100 shadow-xl hover:shadow-2xl transition-all duration-300 text-center p-8">
-            <div className="flex justify-center mb-6">
-              <div className="bg-primary/10 rounded-full p-8">
-                {/* Placeholder for icon/image – you can replace with actual img */}
-                <div className="w-24 h-24 bg-gray-200 rounded-full" />
+          <div
+            key={index}
+            className="group bg-base-100 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-6 hover:scale-105 p-8 text-center"
+          >
+            {/* Icon Circle */}
+            <div className="inline-flex items-center justify-center mb-6">
+              <div className="w-20 h-20 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center shadow-inner">
+                <div className="w-12 h-12 bg-gradient-to-br from-indigo-400 to-purple-400 rounded-full" />
               </div>
             </div>
-            <h3 className="text-2xl font-semibold mb-4">{benefit.title}</h3>
-            <p className="text-gray-600">{benefit.desc}</p>
+
+            {/* Title */}
+            <h3 className="text-xl font-bold text-gray-800 mb-4">
+              {benefit.title}
+            </h3>
+
+            {/* Description */}
+            <p className="text-gray-600 text-sm leading-relaxed">
+              {benefit.desc}
+            </p>
           </div>
         ))}
       </div>

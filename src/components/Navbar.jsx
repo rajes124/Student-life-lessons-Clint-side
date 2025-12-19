@@ -32,7 +32,10 @@ const Navbar = () => {
     <nav className="fixed top-0 left-0 w-full z-50 bg-white shadow-lg">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/" className="text-2xl font-bold text-indigo-700 flex items-center gap-2">
+        <Link
+          to="/"
+          className="text-2xl font-bold text-indigo-700 flex items-center gap-2"
+        >
           Student Life Lessons
         </Link>
 
@@ -40,7 +43,6 @@ const Navbar = () => {
         <div className="hidden md:flex flex-1 justify-center gap-8">
           {currentUser ? (
             <>
-              {/* Logged in user-এ Home দেখাবে */}
               <NavLink to="/" className={navLinkClass}>
                 Home
               </NavLink>
@@ -59,9 +61,15 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <NavLink to="/" className={navLinkClass}>Home</NavLink>
-              <NavLink to="/public-lessons" className={navLinkClass}>Lessons</NavLink>
-              <NavLink to="/pricing" className={navLinkClass}>Premium</NavLink>
+              <NavLink to="/" className={navLinkClass}>
+                Home
+              </NavLink>
+              <NavLink to="/public-lessons" className={navLinkClass}>
+                Lessons
+              </NavLink>
+              <NavLink to="/pricing" className={navLinkClass}>
+                Premium
+              </NavLink>
             </>
           )}
         </div>
@@ -74,7 +82,6 @@ const Navbar = () => {
                 Dashboard
               </NavLink>
 
-              {/* Admin Link – শুধু admin হলে দেখাবে */}
               {userData?.role === "admin" && (
                 <NavLink
                   to="/dashboard/admin/panel"
@@ -96,7 +103,7 @@ const Navbar = () => {
                   <div className="absolute right-0 mt-4 w-64 bg-white shadow-2xl rounded-xl p-6 border border-gray-200">
                     <div className="text-center mb-4">
                       <img
-                        src={user.photoURL || "https://i.pravatar.cc/150"}
+                        src={currentUser.photoURL || "https://i.pravatar.cc/150"}
                         alt="profile"
                         className="w-20 h-20 rounded-full mx-auto mb-3 border-4 border-indigo-600"
                       />
@@ -112,6 +119,7 @@ const Navbar = () => {
                       )}
                     </div>
                     <hr className="my-4" />
+
                     <Link
                       to="/dashboard/profile"
                       onClick={() => setProfileOpen(false)}
@@ -165,44 +173,108 @@ const Navbar = () => {
         <div className="md:hidden bg-white px-6 py-6 space-y-4 shadow-lg border-t border-gray-200">
           {currentUser ? (
             <>
-              {/* Mobile-এও Home দেখাবে */}
-              <NavLink to="/" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">
+              <NavLink
+                to="/"
+                onClick={() => setMobileOpen(false)}
+                className="block py-3 text-lg font-medium hover:text-indigo-600"
+              >
                 Home
               </NavLink>
-              <NavLink to="/dashboard/add-lesson" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">
+              <NavLink
+                to="/dashboard/add-lesson"
+                onClick={() => setMobileOpen(false)}
+                className="block py-3 text-lg font-medium hover:text-indigo-600"
+              >
                 Add Lesson
               </NavLink>
-              <NavLink to="/dashboard/my-lessons" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">
+              <NavLink
+                to="/dashboard/my-lessons"
+                onClick={() => setMobileOpen(false)}
+                className="block py-3 text-lg font-medium hover:text-indigo-600"
+              >
                 My Lessons
               </NavLink>
-              <NavLink to="/public-lessons" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">
+              <NavLink
+                to="/public-lessons"
+                onClick={() => setMobileOpen(false)}
+                className="block py-3 text-lg font-medium hover:text-indigo-600"
+              >
                 Public Lessons
               </NavLink>
-              <NavLink to="/pricing" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">
+              <NavLink
+                to="/pricing"
+                onClick={() => setMobileOpen(false)}
+                className="block py-3 text-lg font-medium hover:text-indigo-600"
+              >
                 Pricing
               </NavLink>
-              <NavLink to="/dashboard" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">
+              <NavLink
+                to="/dashboard"
+                onClick={() => setMobileOpen(false)}
+                className="block py-3 text-lg font-medium hover:text-indigo-600"
+              >
                 Dashboard
               </NavLink>
               {userData?.role === "admin" && (
-                <NavLink to="/dashboard/admin/panel" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-bold text-red-600">
+                <NavLink
+                  to="/dashboard/admin/panel"
+                  onClick={() => setMobileOpen(false)}
+                  className="block py-3 text-lg font-bold text-red-600"
+                >
                   Admin
                 </NavLink>
               )}
-              <Link to="/dashboard/profile" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">
+              <Link
+                to="/dashboard/profile"
+                onClick={() => setMobileOpen(false)}
+                className="block py-3 text-lg font-medium hover:text-indigo-600"
+              >
                 Update Profile
               </Link>
-              <button onClick={handleLogout} className="block py-3 text-lg font-bold text-red-600 w-full text-left">
+              <button
+                onClick={handleLogout}
+                className="block py-3 text-lg font-bold text-red-600 w-full text-left"
+              >
                 Logout
               </button>
             </>
           ) : (
             <>
-              <NavLink to="/" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">Home</NavLink>
-              <NavLink to="/public-lessons" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">Lessons</NavLink>
-              <NavLink to="/pricing" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">Premium</NavLink>
-              <NavLink to="/login" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">Login</NavLink>
-              <NavLink to="/register" onClick={() => setMobileOpen(false)} className="block py-3 text-lg font-medium hover:text-indigo-600">Register</NavLink>
+              <NavLink
+                to="/"
+                onClick={() => setMobileOpen(false)}
+                className="block py-3 text-lg font-medium hover:text-indigo-600"
+              >
+                Home
+              </NavLink>
+              <NavLink
+                to="/public-lessons"
+                onClick={() => setMobileOpen(false)}
+                className="block py-3 text-lg font-medium hover:text-indigo-600"
+              >
+                Lessons
+              </NavLink>
+              <NavLink
+                to="/pricing"
+                onClick={() => setMobileOpen(false)}
+                className="block py-3 text-lg font-medium hover:text-indigo-600"
+              >
+                Premium
+              </NavLink>
+              <NavLink
+                to="/login"
+                onClick={() => setMobileOpen(false)}
+                className="block py-3 text-lg font-medium hover:text-indigo-600"
+              >
+                Login
+              </NavLink>
+              <NavLink
+                to="/register"
+                onClick={() => setMobileOpen(false)}
+                className="block py-3 text-lg font-medium hover:text-indigo-600"
+              >
+                Register
+              </NavLink>
             </>
           )}
         </div>
