@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import api from "../../utils/api";
-import { toast } from "react-toastify";
+import toast from "react-hot-toast";
+;
 import { Link } from "react-router-dom";
 import { Heart, Bookmark, Calendar } from "lucide-react";
 
@@ -10,6 +11,9 @@ const MyLessons = () => {
   const { currentUser, userData } = useAuth();
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
+
+
+
 
   useEffect(() => {
     if (!currentUser) {
@@ -59,45 +63,51 @@ const MyLessons = () => {
 
 // 🔥 ঠিক করা handleDelete – এখন ১০০% কাজ করবে
 const handleDelete = (id, title) => {
-  const toastId = toast.warn(
-    <div className="text-center">
-      <p className="font-semibold mb-2">Confirm Delete</p>
-      <p className="mb-4">Are you sure you want to <span className="text-red-600 font-bold">permanently delete</span> this lesson?</p>
-      <p className="font-medium text-indigo-700 mb-6">"{title}"</p>
-      <div className="flex justify-center gap-4">
-        <button
-          onClick={async () => {
-            toast.dismiss(toastId); // current toast বন্ধ করো
-            try {
-              await api.delete(`/lessons/${id}`);
-              setLessons(lessons.filter((l) => l._id !== id));
-              toast.success("Lesson deleted successfully!");
-            } catch (error) {
-              toast.error("Failed to delete lesson");
-            }
-          }}
-          className="px-5 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700"
-        >
-          Yes, Delete
-        </button>
-        <button
-          onClick={() => toast.dismiss(toastId)}
-          className="px-5 py-2 bg-gray-400 text-white rounded-lg font-bold hover:bg-gray-500"
-        >
-          Cancel
-        </button>
+  toast(
+    (t) => (
+      <div className="text-center p-5 bg-white rounded-xl shadow-lg">
+        <p className="font-bold text-xl mb-3 text-gray-800">Delete Lesson?</p>
+        <p className="text-gray-700 mb-2">This action cannot be undone.</p>
+        <p className="font-semibold text-indigo-700 mb-6 text-lg">
+          "{title}"
+        </p>
+
+        <div className="flex justify-center gap-5">
+          <button
+            onClick={async () => {
+              toast.dismiss(t.id);
+              try {
+                await api.delete(`/lessons/delete/${id}`);
+                setLessons((prev) =>
+                  prev.filter((l) => l._id !== id)
+                );
+                toast.success("Lesson deleted successfully! 🎉");
+              } catch {
+                toast.error("Failed to delete lesson 😔");
+              }
+            }}
+            className="px-8 py-3 bg-red-600 text-white rounded-lg font-bold"
+          >
+            Yes, Delete
+          </button>
+
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            className="px-8 py-3 bg-gray-400 text-white rounded-lg font-bold"
+          >
+            Cancel
+          </button>
+        </div>
       </div>
-    </div>,
+    ),
     {
-      position: "top-center",
-      autoClose: false,
-      closeButton: false,
-      closeOnClick: false,
-      draggable: false,
-      className: "bg-white shadow-2xl rounded-xl p-4 border border-gray-200 max-w-md",
+      duration: Infinity,
     }
   );
 };
+
+
+
   if (loading) {
     return <p className="text-center text-xl mt-20">Loading your lessons...</p>;
   }
@@ -205,12 +215,13 @@ const handleDelete = (id, title) => {
                   >
                     View Details
                   </Link>
-                 <button
+  <button
   onClick={() => handleDelete(lesson._id, lesson.title)}
   className="text-red-600 hover:underline font-medium"
 >
   Delete
 </button>
+
                 </td>
               </tr>
             ))}
