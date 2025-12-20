@@ -1,7 +1,7 @@
 // src/pages/LessonDetails.jsx
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom"; // ← Link যোগ করলাম
-import api from "../../utils/api"; // ← ;s remove করা
+import { useParams, useNavigate, Link } from "react-router-dom"; 
+import api from "../../utils/api"; 
 import toast from "react-hot-toast";
 import { 
   Lock, Heart, Bookmark, Share2, Flag, Calendar, Clock, User, Eye 

@@ -5,7 +5,7 @@ import { Zap, Sparkles, Crown, Star, Rocket } from "lucide-react";
 import WhyStudentLifeLessons from "./WhyStudentLifeLessons";
 import MostSavedLessons from "./MostSavedLessons";
 import TopContributors from "./TopContributors";
-import { Link } from "react-router-dom"; // 🔥 এটা যোগ করো (যদি না থাকে)
+import { Link } from "react-router-dom"; 
 
 const Home = () => {
   return (
@@ -34,7 +34,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 🔥 Upgrade Section – Click করলে Pricing page-এ যাবে */}
+      
   <section className="bg-gradient-to-r from-[#03373D] to-[#045A60] py-24 text-white text-center relative overflow-hidden">
   {/* Optional background pattern */}
   <div className="absolute inset-0 opacity-10">

@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import api from "../../utils/api";
 import toast from "react-hot-toast";
-import { motion } from "framer-motion"; // ← এটা install করো: npm i framer-motion
+import { motion } from "framer-motion"; 
 
 const AdminHome = () => {
   const { currentUser } = useAuth();

@@ -41,7 +41,7 @@ const Register = () => {
       });
 
       toast.success('সফলভাবে রেজিস্টার হয়েছে!');
-      navigate('/login'); // ← Register করার পর Login page-এ নিয়ে যাবে
+      navigate('/login'); 
     } catch (error) {
       toast.error("রেজিস্ট্রেশন ব্যর্থ হয়েছে");
       console.error(error);
@@ -55,7 +55,7 @@ const Register = () => {
     try {
       await signInWithPopup(auth, googleProvider);
       toast.success('Google দিয়ে রেজিস্টার সফল!');
-      navigate('/login'); // ← Google register-এর পরও Login page-এ যাবে
+      navigate('/'); 
     } catch (error) {
       toast.error("Google রেজিস্ট্রেশন ব্যর্থ");
       console.error(error);

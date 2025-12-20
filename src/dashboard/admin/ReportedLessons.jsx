@@ -22,6 +22,38 @@ const ReportedLessons = () => {
     fetchReports();
   }, []);
 
+  const handleDeleteLesson = async (lessonId) => {
+    if (!window.confirm("Are you sure you want to delete this lesson? This cannot be undone.")) {
+      return;
+    }
+
+    try {
+      await api.delete(`/lessons/delete/${lessonId}`);
+      toast.success("Lesson deleted successfully");
+      // Remove from list
+      setReports(reports.filter(r => r.lesson?._id !== lessonId));
+    } catch (error) {
+      toast.error("Failed to delete lesson");
+      console.error(error);
+    }
+  };
+
+  const handleIgnoreReports = async (reportId) => {
+    if (!window.confirm("Are you sure you want to ignore these reports?")) {
+      return;
+    }
+
+    try {
+      await api.delete(`/admin/reported-lessons/${reportId}/ignore`);
+      toast.success("Reports ignored");
+      // Remove from list
+      setReports(reports.filter(r => r._id !== reportId));
+    } catch (error) {
+      toast.error("Failed to ignore reports");
+      console.error(error);
+    }
+  };
+
   if (loading) {
     return <div className="text-center py-20 text-3xl">Loading Reported Lessons...</div>;
   }
@@ -55,10 +87,16 @@ const ReportedLessons = () => {
               </ul>
             </div>
             <div className="mt-6 flex gap-4">
-              <button className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 font-bold">
+              <button 
+                onClick={() => handleDeleteLesson(report.lesson?._id)}
+                className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 font-bold transition"
+              >
                 Delete Lesson
               </button>
-              <button className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-bold">
+              <button 
+                onClick={() => handleIgnoreReports(report._id)}
+                className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 font-bold transition"
+              >
                 Ignore Reports
               </button>
             </div>

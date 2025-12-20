@@ -22,7 +22,7 @@ import DashboardHome from "../dashboard/user/DashboardHome";
 import AddLesson from "../dashboard/user/AddLesson";
 import MyLessons from "../dashboard/user/MyLessons";
 import MyFavorites from "../dashboard/user/MyFavorites";
-import MyProfile from "../dashboard/user/MyProfile"; // ← আপনার পাথ অনুযায়ী
+import MyProfile from "../dashboard/user/MyProfile"; 
 
 // Admin Dashboard Pages
 import AdminHome from "../dashboard/admin/AdminHome";
@@ -61,7 +61,7 @@ export const router = createBrowserRouter([
       { path: "add-lesson", element: <AddLesson /> },
       { path: "my-lessons", element: <MyLessons /> },
       { path: "my-favorites", element: <MyFavorites /> },
-      { path: "profile", element: <MyProfile /> }, // ← এখানে আছে, 404 আর আসবে না
+      { path: "profile", element: <MyProfile /> }, 
     ],
   },
 

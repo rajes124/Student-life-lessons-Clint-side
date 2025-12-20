@@ -12,12 +12,11 @@ const PublicLessons = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedTone, setSelectedTone] = useState("");
-  const [selectedAccessLevel, setSelectedAccessLevel] = useState(""); // নতুন: Free/Premium ফিল্টার
-  const [sortBy, setSortBy] = useState("newest"); // নতুন: সর্টিং
+  const [selectedAccessLevel, setSelectedAccessLevel] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 9;
 
-  // কুয়েরি স্ট্রিং তৈরি
   const queryParams = new URLSearchParams({
     page: currentPage.toString(),
     limit: limit.toString(),
@@ -43,7 +42,6 @@ const PublicLessons = () => {
 
   const tones = ["Motivational", "Sad", "Realization", "Gratitude"];
 
-  // ফিল্টার/সার্চ/সর্ট চেঞ্জ হলে পেজ ১-এ রিসেট
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedCategory, selectedTone, selectedAccessLevel, sortBy]);
@@ -77,10 +75,9 @@ const PublicLessons = () => {
           Public Life Lessons
         </h1>
 
-        {/* Search & Filters – এখন ৪টা কলাম + সর্ট */}
+        {/* Search & Filters */}
         <div className="bg-white rounded-2xl shadow-xl p-6 mb-12">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Search */}
             <div className="lg:col-span-1 relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
@@ -92,7 +89,6 @@ const PublicLessons = () => {
               />
             </div>
 
-            {/* Category */}
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
@@ -106,7 +102,6 @@ const PublicLessons = () => {
               ))}
             </select>
 
-            {/* Tone */}
             <select
               value={selectedTone}
               onChange={(e) => setSelectedTone(e.target.value)}
@@ -120,7 +115,6 @@ const PublicLessons = () => {
               ))}
             </select>
 
-            {/* Access Level Filter */}
             <select
               value={selectedAccessLevel}
               onChange={(e) => setSelectedAccessLevel(e.target.value)}
@@ -132,7 +126,6 @@ const PublicLessons = () => {
             </select>
           </div>
 
-          {/* Sort By – নিচে আলাদা রো */}
           <div className="mt-6 flex justify-end">
             <select
               value={sortBy}
@@ -147,14 +140,17 @@ const PublicLessons = () => {
           </div>
         </div>
 
-        {/* Lessons Grid */}
+    
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {lessons.map((lesson) => {
             const isPremiumLocked =
               lesson.accessLevel?.toLowerCase() === "premium" && !userData?.isPremium;
 
             return (
-              <div key={lesson._id} className="relative h-full">
+              <div
+                key={lesson._id}
+                className="group relative h-full perspective-1000"
+              >
                 {isPremiumLocked && (
                   <div className="absolute inset-0 z-20 bg-black/60 rounded-2xl flex flex-col items-center justify-center text-white">
                     <Lock className="w-12 h-12 mb-3" />
@@ -169,7 +165,7 @@ const PublicLessons = () => {
                 )}
 
                 <div
-                  className={`bg-white rounded-2xl shadow-xl overflow-hidden h-full flex flex-col ${
+                  className={`bg-white rounded-2xl shadow-xl overflow-hidden h-full flex flex-col transform-gpu transition-all duration-500 ease-out group-hover:scale-[1.03] group-hover:rotate-1 group-hover:-translate-y-2 group-hover:shadow-2xl preserve-3d ${
                     isPremiumLocked ? "blur-sm" : ""
                   }`}
                 >
@@ -178,7 +174,7 @@ const PublicLessons = () => {
                     <img
                       src={lesson.imageURL}
                       alt={lesson.title}
-                      className="h-44 w-full object-cover"
+                      className="h-44 w-full object-cover transition-transform duration-700 group-hover:scale-110"
                     />
                   ) : (
                     <div className="h-44 bg-gradient-to-br from-indigo-200 to-purple-300 flex items-center justify-center">

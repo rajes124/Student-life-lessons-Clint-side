@@ -1,7 +1,7 @@
 // src/dashboard/admin/ManageUsers.jsx
 
 import React, { useState, useEffect } from "react";
-import api from "../../utils/api"; // তোমার main api.js
+import api from "../../utils/api"; 
 import toast from "react-hot-toast";
 
 const ManageUsers = () => {
