@@ -27,11 +27,12 @@ export const AuthProvider = ({ children }) => {
             // 🔹 Step 2: User not found → create
             try {
               await api.post("/users/create", {
-                firebaseUid: user.uid,
-                name: user.displayName || "User",
-                email: user.email,
-                photoURL: user.photoURL || null,
-              });
+  firebaseUid: user.uid,
+  name: user.displayName || "User",
+  email: user.email,
+  photoURL: user.photoURL || null,
+});
+
 
               // 🔹 Step 3: Reload user after create
               const res = await api.get(`/users/${user.uid}`);

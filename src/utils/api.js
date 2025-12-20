@@ -11,12 +11,12 @@ const api = axios.create({
   },
 });
 
-// Request interceptor: Firebase token attach
+// ✅ TOKEN AUTO ATTACH (Firebase)
 api.interceptors.request.use(
   async (config) => {
     const user = auth.currentUser;
     if (user) {
-      const token = await user.getIdToken(true); // refresh token
+      const token = await user.getIdToken(true);
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
@@ -24,15 +24,10 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response interceptor: global error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response) {
-      toast.error(error.response.data?.message || "Server Error");
-    } else {
-      toast.error(error.message || "Network Error");
-    }
+    toast.error(error.response?.data?.message || "Server Error");
     return Promise.reject(error);
   }
 );

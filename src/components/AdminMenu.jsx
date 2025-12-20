@@ -1,49 +1,72 @@
+// src/components/AdminMenu.jsx
 import { NavLink } from 'react-router-dom';
 
 const AdminMenu = () => {
   return (
-    <div className="w-64 bg-indigo-900 min-h-screen p-6">
-      <h2 className="text-2xl font-bold text-white mb-10">Admin Panel</h2>
-      <nav className="space-y-4">
+    <div className="w-64 bg-gradient-to-b from-indigo-900 to-purple-900 min-h-screen p-6 shadow-2xl">
+      <h2 className="text-3xl font-bold text-white mb-12 text-center border-b border-indigo-700 pb-4">
+        Admin Panel 👑
+      </h2>
+      <nav className="space-y-3">
         <NavLink
           to="/dashboard/admin"
           className={({ isActive }) =>
-            `block py-3 px-4 rounded-lg text-white font-medium transition ${isActive ? 'bg-indigo-700' : 'hover:bg-indigo-800'}`
+            `block py-4 px-6 rounded-xl text-white font-semibold text-lg transition-all ${
+              isActive 
+                ? 'bg-indigo-600 shadow-lg scale-105' 
+                : 'hover:bg-indigo-800 hover:scale-105'
+            }`
           }
         >
-          Dashboard Home
+          🏠 Dashboard Home
         </NavLink>
         <NavLink
           to="/dashboard/admin/manage-users"
           className={({ isActive }) =>
-            `block py-3 px-4 rounded-lg text-white font-medium transition ${isActive ? 'bg-indigo-700' : 'hover:bg-indigo-800'}`
+            `block py-4 px-6 rounded-xl text-white font-semibold text-lg transition-all ${
+              isActive 
+                ? 'bg-indigo-600 shadow-lg scale-105' 
+                : 'hover:bg-indigo-800 hover:scale-105'
+            }`
           }
         >
-          Manage Users
+          👥 Manage Users
         </NavLink>
         <NavLink
           to="/dashboard/admin/manage-lessons"
           className={({ isActive }) =>
-            `block py-3 px-4 rounded-lg text-white font-medium transition ${isActive ? 'bg-indigo-700' : 'hover:bg-indigo-800'}`
+            `block py-4 px-6 rounded-xl text-white font-semibold text-lg transition-all ${
+              isActive 
+                ? 'bg-indigo-600 shadow-lg scale-105' 
+                : 'hover:bg-indigo-800 hover:scale-105'
+            }`
           }
         >
-          Manage Lessons
+          📚 Manage Lessons
         </NavLink>
         <NavLink
           to="/dashboard/admin/reported-lessons"
           className={({ isActive }) =>
-            `block py-3 px-4 rounded-lg text-white font-medium transition ${isActive ? 'bg-indigo-700' : 'hover:bg-indigo-800'}`
+            `block py-4 px-6 rounded-xl text-white font-semibold text-lg transition-all ${
+              isActive 
+                ? 'bg-indigo-600 shadow-lg scale-105' 
+                : 'hover:bg-indigo-800 hover:scale-105'
+            }`
           }
         >
-          Reported Lessons
+          ⚠️ Reported Lessons
         </NavLink>
         <NavLink
           to="/dashboard/admin/profile"
           className={({ isActive }) =>
-            `block py-3 px-4 rounded-lg text-white font-medium transition ${isActive ? 'bg-indigo-700' : 'hover:bg-indigo-800'}`
+            `block py-4 px-6 rounded-xl text-white font-semibold text-lg transition-all ${
+              isActive 
+                ? 'bg-indigo-600 shadow-lg scale-105' 
+                : 'hover:bg-indigo-800 hover:scale-105'
+            }`
           }
         >
-          Admin Profile
+          👤 Admin Profile
         </NavLink>
       </nav>
     </div>

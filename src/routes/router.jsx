@@ -26,14 +26,25 @@ import MyProfile from "../dashboard/user/MyProfile";
 
 // Admin Dashboard Pages
 import AdminHome from "../dashboard/admin/AdminHome";
-import AdminPanel from "../dashboard/admin/AdminPanel"; // নতুন import
+
 import ManageLessons from "../dashboard/admin/ManageLessons";
 import ManageUsers from "../dashboard/admin/ManageUsers";
 import ReportedLessons from "../dashboard/admin/ReportedLessons";
+import AdminProfile from "../dashboard/admin/AdminProfile";
 
 // Auth Loaders
 import { requireAuth } from "../utils/requireAuth";
 import { requireAdminAuth } from "../utils/requireAdminAuth";
+import AdminLayout from "../layout/AdminLayout";
+
+
+const AdminRoute = ({ children }) => {
+  const { userData, loading } = useAuth();
+  if (loading) return <div className="text-center py-20 text-3xl">Loading...</div>;
+  if (userData?.role !== "admin") return <Navigate to="/dashboard" replace />;
+  return children;
+};
+
 
 export const router = createBrowserRouter([
   // Public Routes (with RootLayout - Navbar + Footer)
@@ -62,24 +73,23 @@ export const router = createBrowserRouter([
       { path: "add-lesson", element: <AddLesson /> },
       { path: "my-lessons", element: <MyLessons /> },
       { path: "my-favorites", element: <MyFavorites /> },
-      { path: "profile", element: <MyProfile /> }, // ✅ added
+     
     ],
   },
 
-  // Admin Dashboard (Protected + Admin Role)
-  {
-    path: "/dashboard/admin",
-    element: <DashboardLayout />,
-    loader: requireAdminAuth,
-    children: [
-      { index: true, element: <AdminHome /> }, // admin home overview
-      { path: "panel", element: <AdminPanel /> }, // নতুন route – full admin panel
-      { path: "manage-lessons", element: <ManageLessons /> },
-      { path: "manage-users", element: <ManageUsers /> },
-      { path: "reported-lessons", element: <ReportedLessons /> },
-    ],
-  },
-
+ // Admin Dashboard
+{
+  path: "/dashboard/admin",
+  element: <AdminLayout />,
+  loader: requireAdminAuth,
+  children: [
+    { index: true, element: <AdminHome /> },
+    { path: "manage-users", element: <ManageUsers /> },
+    { path: "manage-lessons", element: <ManageLessons /> },
+    { path: "reported-lessons", element: <ReportedLessons /> },
+    { path: "profile", element: <AdminProfile /> }, // ← যোগ করো
+  ],
+},
   // 404 Page
   { path: "*", element: <NotFound /> },
 ]);

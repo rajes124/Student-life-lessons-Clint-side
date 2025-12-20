@@ -1,13 +1,17 @@
-import { Navigate, Outlet } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-
 const AdminRoutes = () => {
-  const { currentUser, userData } = useAuth(); // userData = MongoDB থেকে fetched
+  const { currentUser, userData, loading } = useAuth();
 
-  if (!currentUser) return <Navigate to="/login" />;
-  if (!userData?.isAdmin) return <Navigate to="/dashboard" />;
+  if (loading) {
+    return <div className="text-center mt-20 text-2xl">Checking Admin...</div>;
+  }
+
+  if (!currentUser) {
+    return <Navigate to="/login" replace />;
+  }
+
+  if (userData?.role !== "admin") {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return <Outlet />;
 };
-
-export default AdminRoutes;

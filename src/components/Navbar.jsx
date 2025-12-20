@@ -1,7 +1,7 @@
 // src/components/Navbar.jsx
 
 import React, { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom"; // <--- useNavigate যোগ করা
 import { useAuth } from "../contexts/AuthContext";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 
 const Navbar = () => {
   const { currentUser, userData } = useAuth();
+  const navigate = useNavigate(); // <--- এটা যোগ করা
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -18,6 +19,7 @@ const Navbar = () => {
       toast.success("Logged out successfully");
       setProfileOpen(false);
       setMobileOpen(false);
+      navigate("/login"); // <--- লগআউটের পর সরাসরি /login পেজে যাবে
     } catch (error) {
       toast.error("Logout failed");
     }
@@ -79,17 +81,20 @@ const Navbar = () => {
           {currentUser ? (
             <>
               <NavLink to="/dashboard" className={navLinkClass}>
-                Dashboard
-              </NavLink>
+  Dashboard
+</NavLink>
 
-              {userData?.role === "admin" && (
-                <NavLink
-                  to="/dashboard/admin/panel"
-                  className="text-red-600 font-bold hover:text-red-800 transition ml-4"
-                >
-                  Admin
-                </NavLink>
-              )}
+{currentUser && userData?.role === "admin" && (
+  <NavLink 
+    to="/dashboard/admin" 
+    className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold transition shadow-md ml-4"
+  >
+    Admin Panel
+  </NavLink>
+)}
+
+
+
 
               {/* Profile Dropdown */}
               <div className="relative">
@@ -216,14 +221,16 @@ const Navbar = () => {
                 Dashboard
               </NavLink>
               {userData?.role === "admin" && (
-                <NavLink
-                  to="/dashboard/admin/panel"
-                  onClick={() => setMobileOpen(false)}
-                  className="block py-3 text-lg font-bold text-red-600"
-                >
-                  Admin
-                </NavLink>
-              )}
+  <NavLink
+    to="/dashboard/admin"
+    onClick={() => setMobileOpen(false)}
+    className="block py-4 text-xl font-bold text-red-600 bg-red-50 rounded-lg text-center"
+  >
+    ⚡ Admin Panel
+  </NavLink>
+)}
+
+
               <Link
                 to="/dashboard/profile"
                 onClick={() => setMobileOpen(false)}
