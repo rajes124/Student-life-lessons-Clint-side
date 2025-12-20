@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import api from "../../utils/api";
 import toast from "react-hot-toast";
-;
 import { Link } from "react-router-dom";
 import { Heart, Bookmark, Calendar } from "lucide-react";
 
@@ -11,9 +10,6 @@ const MyLessons = () => {
   const { currentUser, userData } = useAuth();
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
-
-
-
 
   useEffect(() => {
     if (!currentUser) {
@@ -61,52 +57,50 @@ const MyLessons = () => {
     }
   };
 
-// 🔥 ঠিক করা handleDelete – এখন ১০০% কাজ করবে
-const handleDelete = (id, title) => {
-  toast(
-    (t) => (
-      <div className="text-center p-5 bg-white rounded-xl shadow-lg">
-        <p className="font-bold text-xl mb-3 text-gray-800">Delete Lesson?</p>
-        <p className="text-gray-700 mb-2">This action cannot be undone.</p>
-        <p className="font-semibold text-indigo-700 mb-6 text-lg">
-          "{title}"
-        </p>
+  // 🔥 ঠিক করা handleDelete – এখন ১০০% কাজ করবে
+  const handleDelete = (id, title) => {
+    toast(
+      (t) => (
+        <div className="text-center p-5 bg-white rounded-xl shadow-lg">
+          <p className="font-bold text-xl mb-3 text-gray-800">Delete Lesson?</p>
+          <p className="text-gray-700 mb-2">This action cannot be undone.</p>
+          <p className="font-semibold text-indigo-700 mb-6 text-lg">
+            "{title}"
+          </p>
 
-        <div className="flex justify-center gap-5">
-          <button
-            onClick={async () => {
-              toast.dismiss(t.id);
-              try {
-                await api.delete(`/lessons/delete/${id}`);
-                setLessons((prev) =>
-                  prev.filter((l) => l._id !== id)
-                );
-                toast.success("Lesson deleted successfully! 🎉");
-              } catch {
-                toast.error("Failed to delete lesson 😔");
-              }
-            }}
-            className="px-8 py-3 bg-red-600 text-white rounded-lg font-bold"
-          >
-            Yes, Delete
-          </button>
+          <div className="flex justify-center gap-5">
+            <button
+              onClick={async () => {
+                toast.dismiss(t.id);
+                try {
+                  await api.delete(`/lessons/delete/${id}`);
+                  setLessons((prev) =>
+                    prev.filter((l) => l._id !== id)
+                  );
+                  toast.success("Lesson deleted successfully! 🎉");
+                } catch {
+                  toast.error("Failed to delete lesson 😔");
+                }
+              }}
+              className="px-8 py-3 bg-red-600 text-white rounded-lg font-bold"
+            >
+              Yes, Delete
+            </button>
 
-          <button
-            onClick={() => toast.dismiss(t.id)}
-            className="px-8 py-3 bg-gray-400 text-white rounded-lg font-bold"
-          >
-            Cancel
-          </button>
+            <button
+              onClick={() => toast.dismiss(t.id)}
+              className="px-8 py-3 bg-gray-400 text-white rounded-lg font-bold"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
-      </div>
-    ),
-    {
-      duration: Infinity,
-    }
-  );
-};
-
-
+      ),
+      {
+        duration: Infinity,
+      }
+    );
+  };
 
   if (loading) {
     return <p className="text-center text-xl mt-20">Loading your lessons...</p>;
@@ -208,20 +202,28 @@ const handleDelete = (id, title) => {
                     </div>
                   </div>
                 </td>
-                <td className="p-4">
+                <td className="p-4 flex items-center gap-6">
                   <Link
                     to={`/lessons/${lesson._id}`}
-                    className="text-blue-600 hover:underline mr-6 font-medium"
+                    className="text-blue-600 hover:underline font-medium"
                   >
                     View Details
                   </Link>
-  <button
-  onClick={() => handleDelete(lesson._id, lesson.title)}
-  className="text-red-600 hover:underline font-medium"
->
-  Delete
-</button>
 
+                  {/* নতুন যোগ করা Update লিঙ্ক */}
+                  <Link
+                    to={`/dashboard/update-lesson/${lesson._id}`}
+                    className="text-green-600 hover:underline font-medium"
+                  >
+                    Update
+                  </Link>
+
+                  <button
+                    onClick={() => handleDelete(lesson._id, lesson.title)}
+                    className="text-red-600 hover:underline font-medium"
+                  >
+                    Delete
+                  </button>
                 </td>
               </tr>
             ))}

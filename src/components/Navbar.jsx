@@ -1,7 +1,6 @@
 // src/components/Navbar.jsx
-
 import React, { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom"; // <--- useNavigate যোগ করা
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { signOut } from "firebase/auth";
 import { auth } from "../firebase/firebaseConfig";
@@ -9,7 +8,7 @@ import toast from "react-hot-toast";
 
 const Navbar = () => {
   const { currentUser, userData } = useAuth();
-  const navigate = useNavigate(); // <--- এটা যোগ করা
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
 
@@ -19,7 +18,7 @@ const Navbar = () => {
       toast.success("Logged out successfully");
       setProfileOpen(false);
       setMobileOpen(false);
-      navigate("/login"); // <--- লগআউটের পর সরাসরি /login পেজে যাবে
+      navigate("/login");
     } catch (error) {
       toast.error("Logout failed");
     }
@@ -81,36 +80,34 @@ const Navbar = () => {
           {currentUser ? (
             <>
               <NavLink to="/dashboard" className={navLinkClass}>
-  Dashboard
-</NavLink>
-
-{currentUser && userData?.role === "admin" && (
-  <NavLink 
-    to="/dashboard/admin" 
-    className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-lg font-bold transition shadow-md ml-4"
-  >
-    Admin Panel
-  </NavLink>
-)}
-
-
-
+                Dashboard
+              </NavLink>
 
               {/* Profile Dropdown */}
               <div className="relative">
-                <img
-                  src={currentUser.photoURL || "https://i.ibb.co/9yK7qfM/user.png"}
-                  alt="profile"
+                <div
+                  className="relative cursor-pointer group"
                   onClick={() => setProfileOpen(!profileOpen)}
-                  className="w-12 h-12 rounded-full border-4 border-indigo-600 cursor-pointer object-cover shadow-md hover:shadow-lg transition"
-                />
+                >
+                  <img
+                    src={currentUser.photoURL || "https://i.ibb.co/9yK7qfM/user.png"}
+                    alt="profile"
+                    className="w-10 h-10 rounded-full border-4 border-indigo-500 object-cover shadow-md transition-all duration-300 group-hover:border-indigo-600 group-hover:shadow-xl group-hover:scale-105"
+                  />
+                  {userData?.isPremium && (
+                    <span className="absolute -top-1 -right-1 bg-yellow-400 text-indigo-900 text-[10px] font-bold px-1.5 rounded-full shadow">
+                      ★
+                    </span>
+                  )}
+                </div>
+
                 {profileOpen && (
-                  <div className="absolute right-0 mt-4 w-64 bg-white shadow-2xl rounded-xl p-6 border border-gray-200">
-                    <div className="text-center mb-4">
+                  <div className="absolute right-0 mt-4 w-72 bg-white shadow-2xl rounded-xl p-6 border border-gray-200">
+                    <div className="text-center mb-5">
                       <img
                         src={currentUser.photoURL || "https://i.pravatar.cc/150"}
                         alt="profile"
-                        className="w-20 h-20 rounded-full mx-auto mb-3 border-4 border-indigo-600"
+                        className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-indigo-600 shadow-lg"
                       />
                       <p className="font-bold text-xl">
                         {currentUser.displayName || "User"}
@@ -118,15 +115,16 @@ const Navbar = () => {
                       <p className="text-sm text-gray-600">{currentUser.email}</p>
 
                       {userData?.isPremium && (
-                        <span className="inline-block mt-2 bg-yellow-400 text-indigo-900 px-4 py-1 rounded-full text-sm font-bold">
-                          Premium ⭐
+                        <span className="inline-block mt-3 bg-gradient-to-r from-yellow-400 to-amber-500 text-indigo-900 px-5 py-1 rounded-full text-sm font-bold shadow-md">
+                          Premium Member ⭐
                         </span>
                       )}
                     </div>
-                    <hr className="my-4" />
+
+                    <hr className="my-5" />
 
                     <Link
-                      to="/dashboard/profile"
+                      to="/dashboard/profile"  // ← এটা আছে, 404 দেখায় না
                       onClick={() => setProfileOpen(false)}
                       className="block py-2 hover:text-indigo-600 font-medium"
                     >
@@ -139,9 +137,20 @@ const Navbar = () => {
                     >
                       Dashboard
                     </Link>
+
+                    {userData?.role === "admin" && (
+                      <Link
+                        to="/dashboard/admin"  // ← Admin Panel এখানে
+                        onClick={() => setProfileOpen(false)}
+                        className="block py-3 mt-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg text-center transition"
+                      >
+                        ⚡ Admin Panel
+                      </Link>
+                    )}
+
                     <button
                       onClick={handleLogout}
-                      className="w-full mt-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition"
+                      className="w-full mt-5 py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-lg transition"
                     >
                       Logout
                     </button>
@@ -220,24 +229,25 @@ const Navbar = () => {
               >
                 Dashboard
               </NavLink>
-              {userData?.role === "admin" && (
-  <NavLink
-    to="/dashboard/admin"
-    onClick={() => setMobileOpen(false)}
-    className="block py-4 text-xl font-bold text-red-600 bg-red-50 rounded-lg text-center"
-  >
-    ⚡ Admin Panel
-  </NavLink>
-)}
-
 
               <Link
-                to="/dashboard/profile"
+                to="/dashboard/profile"  // ← মোবাইলেও Update Profile
                 onClick={() => setMobileOpen(false)}
                 className="block py-3 text-lg font-medium hover:text-indigo-600"
               >
                 Update Profile
               </Link>
+
+              {userData?.role === "admin" && (
+                <Link
+                  to="/dashboard/admin"
+                  onClick={() => setMobileOpen(false)}
+                  className="block py-4 text-xl font-bold text-red-600 bg-red-50 rounded-lg text-center"
+                >
+                  ⚡ Admin Panel
+                </Link>
+              )}
+
               <button
                 onClick={handleLogout}
                 className="block py-3 text-lg font-bold text-red-600 w-full text-left"

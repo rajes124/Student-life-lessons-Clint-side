@@ -1,7 +1,7 @@
 // src/pages/PublicLessons.jsx
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Search, Lock, Calendar, User } from "lucide-react";
+import { Search, Lock, Calendar, User, ChevronLeft, ChevronRight } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import toast from "react-hot-toast";
 import useAxiosPublic from "../hooks/useAxiosPublic";
@@ -12,12 +12,23 @@ const PublicLessons = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedTone, setSelectedTone] = useState("");
+  const [selectedAccessLevel, setSelectedAccessLevel] = useState(""); // নতুন: Free/Premium ফিল্টার
+  const [sortBy, setSortBy] = useState("newest"); // নতুন: সর্টিং
   const [currentPage, setCurrentPage] = useState(1);
   const limit = 9;
 
-  const { data: response, loading, error } = useAxiosPublic(
-    `/public?page=${currentPage}&limit=${limit}&search=${searchTerm}&category=${selectedCategory}&emotionalTone=${selectedTone}`
-  );
+  // কুয়েরি স্ট্রিং তৈরি
+  const queryParams = new URLSearchParams({
+    page: currentPage.toString(),
+    limit: limit.toString(),
+    search: searchTerm,
+    category: selectedCategory,
+    emotionalTone: selectedTone,
+    accessLevel: selectedAccessLevel,
+    sort: sortBy,
+  }).toString();
+
+  const { data: response, loading, error } = useAxiosPublic(`/public?${queryParams}`);
 
   const lessons = response?.lessons || [];
   const totalPages = response?.totalPages || 1;
@@ -32,11 +43,10 @@ const PublicLessons = () => {
 
   const tones = ["Motivational", "Sad", "Realization", "Gratitude"];
 
-
-  
+  // ফিল্টার/সার্চ/সর্ট চেঞ্জ হলে পেজ ১-এ রিসেট
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedCategory, selectedTone]);
+  }, [searchTerm, selectedCategory, selectedTone, selectedAccessLevel, sortBy]);
 
   if (loading) {
     return (
@@ -67,24 +77,26 @@ const PublicLessons = () => {
           Public Life Lessons
         </h1>
 
-        {/* Search & Filter */}
+        {/* Search & Filters – এখন ৪টা কলাম + সর্ট */}
         <div className="bg-white rounded-2xl shadow-xl p-6 mb-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="md:col-span-2 relative">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {/* Search */}
+            <div className="lg:col-span-1 relative">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search lessons..."
-                className="w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-300"
+                className="w-full pl-12 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-indigo-300 outline-none"
               />
             </div>
 
+            {/* Category */}
             <select
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
-              className="px-4 py-3 border rounded-xl"
+              className="px-4 py-3 border rounded-xl outline-none"
             >
               <option value="">All Categories</option>
               {categories.map((cat) => (
@@ -94,10 +106,11 @@ const PublicLessons = () => {
               ))}
             </select>
 
+            {/* Tone */}
             <select
               value={selectedTone}
               onChange={(e) => setSelectedTone(e.target.value)}
-              className="px-4 py-3 border rounded-xl"
+              className="px-4 py-3 border rounded-xl outline-none"
             >
               <option value="">All Tones</option>
               {tones.map((tone) => (
@@ -106,6 +119,31 @@ const PublicLessons = () => {
                 </option>
               ))}
             </select>
+
+            {/* Access Level Filter */}
+            <select
+              value={selectedAccessLevel}
+              onChange={(e) => setSelectedAccessLevel(e.target.value)}
+              className="px-4 py-3 border rounded-xl outline-none"
+            >
+              <option value="">All Access</option>
+              <option value="free">Free</option>
+              <option value="premium">Premium</option>
+            </select>
+          </div>
+
+          {/* Sort By – নিচে আলাদা রো */}
+          <div className="mt-6 flex justify-end">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="px-6 py-3 border rounded-xl bg-indigo-50 text-indigo-700 font-medium outline-none"
+            >
+              <option value="newest">Newest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="mostSaved">Most Saved</option>
+              <option value="mostLiked">Most Liked</option>
+            </select>
           </div>
         </div>
 
@@ -113,8 +151,7 @@ const PublicLessons = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {lessons.map((lesson) => {
             const isPremiumLocked =
-              lesson.accessLevel?.toLowerCase() === "premium" &&
-              !userData?.isPremium;
+              lesson.accessLevel?.toLowerCase() === "premium" && !userData?.isPremium;
 
             return (
               <div key={lesson._id} className="relative h-full">
@@ -124,7 +161,7 @@ const PublicLessons = () => {
                     <p className="text-lg font-bold">Premium Lesson</p>
                     <Link
                       to="/pricing"
-                      className="mt-4 px-6 py-2 bg-amber-500 rounded-full font-semibold"
+                      className="mt-4 px-6 py-2 bg-amber-500 hover:bg-amber-600 rounded-full font-semibold transition"
                     >
                       Upgrade Now
                     </Link>
@@ -136,7 +173,7 @@ const PublicLessons = () => {
                     isPremiumLocked ? "blur-sm" : ""
                   }`}
                 >
-                  {/* Image (smaller height) */}
+                  {/* Image */}
                   {lesson.imageURL ? (
                     <img
                       src={lesson.imageURL}
@@ -145,7 +182,7 @@ const PublicLessons = () => {
                     />
                   ) : (
                     <div className="h-44 bg-gradient-to-br from-indigo-200 to-purple-300 flex items-center justify-center">
-                      <span className="text-6xl opacity-50">📖</span>
+                      <span className="text-6xl opacity-50">Book Emoji</span>
                     </div>
                   )}
 
@@ -155,7 +192,6 @@ const PublicLessons = () => {
                       {lesson.title}
                     </h3>
 
-                    {/* 🔥 Description fixed height */}
                     <p className="text-gray-600 text-sm mb-4 line-clamp-3">
                       {lesson.description}
                     </p>
@@ -166,25 +202,23 @@ const PublicLessons = () => {
                       </span>
                       <span className="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-semibold">
                         {lesson.emotionalTone}
-
                       </span>
-
-                        {/* ✅ Access Level */}
-  <span
-    className={`px-3 py-1 rounded-full text-xs font-semibold
-    ${lesson.accessLevel === "premium"
-      ? "bg-amber-100 text-amber-700"
-      : "bg-green-100 text-green-700"}`}
-  >
-    {lesson.accessLevel || "free"}
-  </span>
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          lesson.accessLevel === "premium"
+                            ? "bg-amber-100 text-amber-700"
+                            : "bg-green-100 text-green-700"
+                        }`}
+                      >
+                        {lesson.accessLevel || "free"}
+                      </span>
                     </div>
 
                     <div className="flex items-center gap-3 mb-3">
                       <img
                         src={lesson.creatorPhoto || "https://i.pravatar.cc/150"}
-                        alt=""
-                        className="w-10 h-10 rounded-full"
+                        alt={lesson.creatorName}
+                        className="w-10 h-10 rounded-full object-cover"
                       />
                       <p className="text-sm font-semibold text-gray-700 flex items-center gap-1">
                         <User className="w-4 h-4" />
@@ -197,10 +231,9 @@ const PublicLessons = () => {
                       {new Date(lesson.createdAt).toLocaleDateString()}
                     </p>
 
-                    {/* Button always bottom */}
                     <Link
                       to={`/lessons/${lesson._id}`}
-                      className="mt-auto block text-center bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700"
+                      className="mt-auto block text-center bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-xl font-semibold transition"
                     >
                       See Details →
                     </Link>
@@ -211,22 +244,48 @@ const PublicLessons = () => {
           })}
         </div>
 
-        {/* Pagination */}
+        {/* Enhanced Pagination */}
         {totalPages > 1 && (
-          <div className="flex justify-center gap-3 mt-14">
-            {[...Array(totalPages)].map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`w-10 h-10 rounded-lg font-bold ${
-                  currentPage === i + 1
-                    ? "bg-indigo-600 text-white"
-                    : "bg-gray-200"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
+          <div className="flex justify-center items-center gap-4 mt-14">
+            <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`p-3 rounded-lg font-bold flex items-center gap-2 transition ${
+                currentPage === 1
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-indigo-600 text-white hover:bg-indigo-700"
+              }`}
+            >
+              <ChevronLeft className="w-5 h-5" /> Previous
+            </button>
+
+            <div className="flex gap-2">
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`w-10 h-10 rounded-lg font-bold transition ${
+                    currentPage === i + 1
+                      ? "bg-indigo-600 text-white"
+                      : "bg-gray-200 hover:bg-gray-300"
+                  }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className={`p-3 rounded-lg font-bold flex items-center gap-2 transition ${
+                currentPage === totalPages
+                  ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                  : "bg-indigo-600 text-white hover:bg-indigo-700"
+              }`}
+            >
+              Next <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         )}
       </div>

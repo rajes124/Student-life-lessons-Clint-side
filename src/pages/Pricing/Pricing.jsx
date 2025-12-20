@@ -1,9 +1,10 @@
 import axios from "axios";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link } from "react-router-dom";
+import { Zap, Crown, Star, Sparkles, Rocket, Gem, Trophy, Flame } from "lucide-react"; // Assuming you're using lucide-react icons
 
 const Pricing = () => {
-const { currentUser: user, userData: dbUser, loading: authLoading } = useAuth();
+  const { currentUser: user, userData: dbUser, loading: authLoading } = useAuth();
 
   // Debug – console-এ দেখো কী আসছে
   console.log("Auth User:", user);
@@ -151,11 +152,30 @@ const { currentUser: user, userData: dbUser, loading: authLoading } = useAuth();
               ৳1500
             </h2>
             <p className="text-xl text-gray-600 mb-10">Lifetime Access • No Subscription • Instant Activation</p>
+
+            {/* Next-level upgraded button */}
             <button
               onClick={handleUpgrade}
-              className="px-14 py-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-2xl font-bold rounded-full shadow-2xl hover:scale-110 hover:shadow-purple-500/60 transition-all duration-500"
+              className="group relative inline-flex items-center gap-6 bg-gradient-to-r from-white via-gray-50 to-white text-[#03373D] px-16 py-7 rounded-3xl text-3xl md:text-4xl font-extrabold shadow-2xl hover:shadow-[0_0_60px_rgba(79,70,229,0.6)] hover:scale-110 transition-all duration-700 transform overflow-hidden border-4 border-indigo-400/30"
             >
-              Upgrade to Premium Now ⭐
+              {/* Left Icons - more premium & animated */}
+              <div className="flex items-center gap-4">
+                <Gem className="w-12 h-12 text-indigo-600 group-hover:text-indigo-700 group-hover:scale-125 transition-all duration-500" />
+                <Crown className="w-11 h-11 text-yellow-500 group-hover:scale-150 group-hover:rotate-12 transition-all duration-700" />
+              </div>
+
+              Upgrade to Premium Now
+
+              {/* Right Icons - more advanced & playful */}
+              <div className="flex items-center gap-4">
+                <Flame className="w-11 h-11 text-orange-500 group-hover:translate-y-[-10px] group-hover:rotate-[-15deg] transition-all duration-700" />
+                <Trophy className="w-12 h-12 text-yellow-600 group-hover:rotate-180 group-hover:scale-125 transition-all duration-1000" />
+                <Rocket className="w-12 h-12 text-pink-500 group-hover:translate-x-3 group-hover:-translate-y-3 transition-all duration-700" />
+              </div>
+
+              {/* Background glow + shine effect */}
+              <span className="absolute inset-0 rounded-3xl bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-30 transition-opacity duration-700 pointer-events-none"></span>
+              <span className="absolute inset-0 rounded-3xl bg-white/20 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></span>
             </button>
           </div>
         </div>
