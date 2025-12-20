@@ -20,9 +20,9 @@ const AdminHome = () => {
     const fetchAdminStats = async () => {
       try {
         const [usersRes, lessonsRes, reportsRes] = await Promise.all([
-          api.get("/admin/users"),
-          api.get("/admin/lessons"),
-          api.get("/admin/reported-lessons"),
+        api.get("/admin/users"),             // ← শুধু /admin
+        api.get("/admin/lessons"),           // ← শুধু /admin
+        api.get("/admin/reported-lessons"),
         ]);
 
         const users = usersRes.data;

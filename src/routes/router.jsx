@@ -34,7 +34,7 @@ import AdminProfile from "../dashboard/admin/AdminProfile";
 
 // Auth Loaders
 import { requireAuth } from "../utils/requireAuth";
-import { requireAdminAuth } from "../utils/requireAdminAuth";
+
 import AdminLayout from "../layout/AdminLayout";
 
 
@@ -67,7 +67,7 @@ export const router = createBrowserRouter([
   {
     path: "/dashboard",
     element: <DashboardLayout />,
-    loader: requireAuth,
+    
     children: [
       { index: true, element: <DashboardHome /> },
       { path: "add-lesson", element: <AddLesson /> },
@@ -81,7 +81,7 @@ export const router = createBrowserRouter([
 {
   path: "/dashboard/admin",
   element: <AdminLayout />,
-  loader: requireAdminAuth,
+  
   children: [
     { index: true, element: <AdminHome /> },
     { path: "manage-users", element: <ManageUsers /> },

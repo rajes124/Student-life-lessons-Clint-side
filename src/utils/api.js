@@ -24,10 +24,14 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// ✅ RESPONSE INTERCEPTOR – 404 এ toast দেখাবে না (যাতে "User not found" বা অন্য 404 এ বিরক্ত না করে)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    toast.error(error.response?.data?.message || "Server Error");
+    // শুধু 404 হলে toast দেখাবে না (যেমন ভুল রুটে কল করলে)
+    if (error.response?.status !== 404) {
+      toast.error(error.response?.data?.message || "Server Error");
+    }
     return Promise.reject(error);
   }
 );
