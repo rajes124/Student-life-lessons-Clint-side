@@ -148,9 +148,9 @@ const Pricing = () => {
 
           <div className="bg-gradient-to-r from-indigo-100 to-purple-100 p-16 text-center">
             <p className="text-2xl text-gray-700 mb-4">One-Time Payment</p>
-           <h2 className="text-6xl font-extrabold text-indigo-700 mb-4">
-  ৳1500 <span className="text-3xl text-gray-600">($15 USD - Test)</span>
-</h2>
+            <h2 className="text-6xl font-extrabold text-indigo-700 mb-4">
+              $15
+            </h2>
             <p className="text-xl text-gray-600 mb-10">Lifetime Access • No Subscription • Instant Activation</p>
 
             {/* Next-level upgraded button */}

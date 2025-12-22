@@ -65,6 +65,7 @@ const PublicLessons = () => {
           Public Life Lessons
         </h1>
 
+        {/* Lessons Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {lessons.map((lesson) => {
             const isPremiumLocked =
@@ -73,12 +74,12 @@ const PublicLessons = () => {
             return (
               <motion.div
                 key={lesson._id}
-                className="relative"
                 whileHover={{ scale: isPremiumLocked ? 1 : 1.03 }}
+                className="relative group"
               >
-                {/* 🔒 Overlay */}
+                {/* 🔒 Premium Overlay */}
                 {isPremiumLocked && (
-                  <div className="absolute inset-0 z-30 bg-black/60 rounded-2xl flex flex-col items-center justify-center text-white">
+                  <div className="absolute inset-0 z-20 bg-black/60 rounded-2xl flex flex-col items-center justify-center text-white">
                     <Lock className="w-12 h-12 mb-3 animate-bounce" />
                     <p className="font-bold mb-2">Premium Lesson</p>
                     <Link
@@ -91,14 +92,9 @@ const PublicLessons = () => {
                 )}
 
                 {/* 🧊 Card */}
-                <div className="bg-white rounded-2xl shadow-xl overflow-hidden h-full flex flex-col relative z-10">
-                  {/* ✅ BLUR WRAPPER (image + content) */}
-                  <div
-                    className={`h-full ${
-                      isPremiumLocked ? "blur-md pointer-events-none" : ""
-                    }`}
-                  >
-                    {/* Image */}
+                <div className="bg-white rounded-2xl shadow-xl overflow-hidden h-full flex flex-col">
+                  {/* 🔹 Blur only content */}
+                  <div className={isPremiumLocked ? "blur-sm" : ""}>
                     {lesson.imageURL ? (
                       <img
                         src={lesson.imageURL}
@@ -114,7 +110,6 @@ const PublicLessons = () => {
                       </div>
                     )}
 
-                    {/* Content */}
                     <div className="p-5 flex flex-col flex-grow">
                       <h3 className="text-xl font-bold text-indigo-800 mb-2">
                         {lesson.title}
@@ -178,6 +173,7 @@ const PublicLessons = () => {
           })}
         </div>
 
+        {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex justify-center items-center gap-4 mt-14">
             <button
