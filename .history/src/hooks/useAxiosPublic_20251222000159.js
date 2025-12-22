@@ -3,7 +3,7 @@ import axios from "axios";
 
 // 🔥 Base URL সঠিকভাবে set করা
 const API = axios.create({
-  baseURL: "https://lessons-backend-six.vercel.app/api/lessons",
+  baseURL: "http://localhost:5000/api/lessons",
   // যদি cookie বা auth header লাগে, পরে add করো
 });
 

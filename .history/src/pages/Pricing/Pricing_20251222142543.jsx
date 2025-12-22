@@ -90,7 +90,7 @@ const Pricing = () => {
   const handleUpgrade = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:5000/api/stripe/create-checkout-session",
+        "https://lessons-backend-six.vercel.app/api/stripe/create-checkout-session",
         {
           email: user.email,
           uid: user.uid,
