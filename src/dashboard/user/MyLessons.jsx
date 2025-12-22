@@ -57,7 +57,7 @@ const MyLessons = () => {
     }
   };
 
-  // 🔥 ঠিক করা handleDelete – এখন ১০০% কাজ করবে
+  
   const handleDelete = (id, title) => {
     toast(
       (t) => (

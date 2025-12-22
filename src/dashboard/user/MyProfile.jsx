@@ -16,7 +16,7 @@ const MyProfile = () => {
   const [savedCount, setSavedCount] = useState(0);
   const [fetchingStats, setFetchingStats] = useState(true);
 
-  // Profile update handler (আগের মতোই অপরিবর্তিত)
+  // Profile update handler
   const handleSubmit = async (e) => {
     e.preventDefault();
 

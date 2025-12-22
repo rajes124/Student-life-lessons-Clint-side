@@ -14,7 +14,7 @@ const TopContributors = () => {
       } catch (error) {
         toast.error("Failed to load top contributors");
 
-        // ✅ Hardcoded fallback with SAFE images
+        
         setContributors([
           {
             name: "Alex Johnson",

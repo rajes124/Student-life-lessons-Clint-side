@@ -54,7 +54,7 @@ const FeaturedLessons = () => {
           return (
             <div
               key={lesson._id}
-              className="group relative bg-base-100 rounded-2xl shadow-xl overflow-hidden transition-all duration-700 transform-gpu hover:-translate-y-6 hover:scale-105 hover:rotate-1 hover:shadow-2xl flex flex-col h-full" // h-full + flex-col যোগ করলাম
+              className="group relative bg-base-100 rounded-2xl shadow-xl overflow-hidden transition-all duration-700 transform-gpu hover:-translate-y-6 hover:scale-105 hover:rotate-1 hover:shadow-2xl flex flex-col" // <--- flex flex-col যোগ করলাম
               style={{ animationDelay: `${index * 0.15}s` }}
             >
               {/* Image */}
@@ -79,13 +79,13 @@ const FeaturedLessons = () => {
                   {lesson.title}
                 </h3>
 
-                {/* Description – line-clamp-3 same, flex-grow দিয়ে space */}
+                {/* Description */}
                 <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed flex-grow">
                   {lesson.description}
                 </p>
 
                 {/* Badges */}
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap gap-2 mb-6"> {/* mb-6 দিয়ে button-এর জন্য space */}
                   <span className="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-medium">
                     {lesson.category}
                   </span>
@@ -94,7 +94,7 @@ const FeaturedLessons = () => {
                   </span>
                 </div>
 
-                {/* Read More Button – আগের size same, mt-auto দিয়ে নিচে fixed */}
+                {/* Read More Button – mt-auto দিয়ে সবসময় নিচে fixed */}
                 <Link
                   to={`/lessons/${lesson._id}`}
                   className="mt-auto inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-full shadow-xl hover:shadow-purple-500/60 hover:translate-x-2 transition-all duration-500"

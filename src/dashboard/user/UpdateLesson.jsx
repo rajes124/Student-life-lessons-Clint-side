@@ -3,7 +3,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 
 const UpdateLesson = () => {
-  const { id } = useParams(); // :id থেকে লেসন আইডি নিবে
+  const { id } = useParams(); 
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-6">

@@ -43,15 +43,15 @@ const AddLesson = () => {
     setLoading(true);
 
     try {
-      // 🔥 ONLY FIX ADDED (backend lowercase expects)
+    
       const payload = {
         title: title.trim(),
         description: description.trim(),
         category,
         emotionalTone,
         imageURL: imageURL.trim() || null,
-        visibility: visibility.toLowerCase(),      // ← FIX
-       accessLevel: accessLevel.toLowerCase(),    // ← FIX
+        visibility: visibility.toLowerCase(),      
+       accessLevel: accessLevel.toLowerCase(),    
       };
 
       const res = await api.post("/lessons/add", payload);

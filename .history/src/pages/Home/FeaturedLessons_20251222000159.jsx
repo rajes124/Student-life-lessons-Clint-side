@@ -46,7 +46,7 @@ const FeaturedLessons = () => {
         </p>
       </div>
 
-      {/* Cards Grid */}
+      {/* Cards Grid – আরও ছোট */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
         {lessons.map((lesson, index) => {
           const isPremium = lesson.accessLevel === "premium";
@@ -54,33 +54,34 @@ const FeaturedLessons = () => {
           return (
             <div
               key={lesson._id}
-              className="group relative bg-base-100 rounded-2xl shadow-xl overflow-hidden transition-all duration-700 transform-gpu hover:-translate-y-6 hover:scale-105 hover:rotate-1 hover:shadow-2xl flex flex-col h-full" // h-full + flex-col যোগ করলাম
+              className="group relative bg-base-100 rounded-2xl shadow-xl overflow-hidden transition-all duration-700 transform-gpu hover:-translate-y-6 hover:scale-105 hover:rotate-1 hover:shadow-2xl"
               style={{ animationDelay: `${index * 0.15}s` }}
             >
-              {/* Image */}
+            
               <div className="relative h-48 overflow-hidden">
                 <img
                   src={lesson.imageURL || defaultImage}
                   alt={lesson.title}
                   className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-120"
                 />
+                {/* Dark overlay on hover */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
               </div>
 
-              {/* Content – flex-grow দিয়ে description space নেবে */}
-              <div className="p-5 flex flex-col flex-grow">
+              {/* Content – আরও কম padding */}
+              <div className="p-5">
                 {/* Featured Badge */}
                 <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-xs font-bold rounded-full mb-3 shadow-md">
                   <span>✨ Featured</span>
                 </div>
 
-                {/* Title */}
+                {/* Title  */}
                 <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2">
                   {lesson.title}
                 </h3>
 
-                {/* Description – line-clamp-3 same, flex-grow দিয়ে space */}
-                <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed flex-grow">
+                {/* Description  */}
+                <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed">
                   {lesson.description}
                 </p>
 
@@ -94,10 +95,10 @@ const FeaturedLessons = () => {
                   </span>
                 </div>
 
-                {/* Read More Button – আগের size same, mt-auto দিয়ে নিচে fixed */}
+                {/* Read More Button  */}
                 <Link
                   to={`/lessons/${lesson._id}`}
-                  className="mt-auto inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-full shadow-xl hover:shadow-purple-500/60 hover:translate-x-2 transition-all duration-500"
+                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-full shadow-xl hover:shadow-purple-500/60 hover:translate-x-2 transition-all duration-500"
                 >
                   Read More
                   <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-3" />

@@ -19,7 +19,7 @@ const useAxiosPublic = (endpoint, params = {}) => {
 
       const res = await API.get(endpoint, { params });
 
-      // 🔥 এখানে পুরো response data টা set করছি (object)
+     
       setData(res.data);
     } catch (err) {
       console.error("Axios Public Error:", err);

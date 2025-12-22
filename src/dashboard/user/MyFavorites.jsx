@@ -26,7 +26,7 @@ const MyFavorites = () => {
 
     const fetchFavorites = async () => {
       try {
-        const res = await api.get("/lessons/my-favorites"); // তোমার backend route
+        const res = await api.get("/lessons/my-favorites"); 
         setFavorites(res.data.favorites || []);
       } catch (err) {
         toast.error("Failed to load your favorite lessons");

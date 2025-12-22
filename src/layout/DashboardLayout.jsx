@@ -30,7 +30,7 @@ const DashboardLayout = () => {
       <main className="flex-1 pt-20 pb-12 px-4">
         <div className="max-w-7xl mx-auto">
           <Outlet />
-          {/* এখানে DashboardHome, AddLesson, MyLessons ইত্যাদি লোড হবে */}
+         
         </div>
       </main>
 

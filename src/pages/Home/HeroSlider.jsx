@@ -32,7 +32,7 @@ export default function HeroSlider() {
     <section className="relative h-screen w-full overflow-hidden">
       <Swiper
         modules={[Autoplay, Pagination, Navigation, EffectFade]}
-        effect="fade" // 🔥 সুন্দর fade transition
+        effect="fade" 
         autoplay={{
           delay: 6000,
           disableOnInteraction: false,
@@ -60,7 +60,7 @@ export default function HeroSlider() {
                 className="absolute inset-0 w-full h-full object-cover"
               />
 
-              {/* Dark Gradient Overlay – আরও cinematic */}
+            
               <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/30"></div>
 
               {/* Content */}

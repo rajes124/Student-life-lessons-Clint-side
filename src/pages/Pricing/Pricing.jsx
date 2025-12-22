@@ -6,7 +6,7 @@ import { Zap, Crown, Star, Sparkles, Rocket, Gem, Trophy, Flame } from "lucide-r
 const Pricing = () => {
   const { currentUser: user, userData: dbUser, loading: authLoading } = useAuth();
 
-  // Debug – console-এ দেখো কী আসছে
+  
   console.log("Auth User:", user);
   console.log("DB User:", dbUser);
   console.log("Auth Loading:", authLoading);
