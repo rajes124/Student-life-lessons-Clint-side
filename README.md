@@ -197,17 +197,14 @@ This platform helps users preserve personal wisdom, track learning progress, and
 git clone https://github.com/rajes124/Student-life-lessons-Clint-side.git
 npm install
 npm run dev
-
-### Lessons-backend
-```bash
+Server Side
+bash
+Copy code
 git clone https://github.com/rajes124/Lessons-backend.git
 cd Lessons-backend
 npm install
 npm run start
-
-
 📌 Key Rules Followed
-
 No lorem ipsum text used
 
 No default browser alerts
@@ -221,10 +218,8 @@ Minimum commit requirements maintained
 Unique project idea and design
 
 👨‍💻 Author
-
 Anonto Rishi
 MERN Stack Developer
 📍 Sylhet, Moulvibazar, Bangladesh
 📧 rajesray307@gmail.com
-
 📞 Phone: 01407539879
